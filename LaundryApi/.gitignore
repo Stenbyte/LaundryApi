@@ -1,5 +1,3 @@
-# Ignore auto-generated AssemblyInfo.cs
-obj/**/AssemblyInfo.cs
 obj/
 bin/
 *.dll
