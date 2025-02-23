@@ -2,7 +2,7 @@ using LaundryBooking.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace LaundryBookings.Services
+namespace LaundryBooking.Services
 {
     public class BookingService
     {
@@ -18,5 +18,7 @@ namespace LaundryBookings.Services
         public async Task<List<Booking>> GetBookings() => await _bookingsCollection.Find(_ => true).ToListAsync();
 
         public async Task<Booking?> GetBookingById(string id) => await _bookingsCollection.Find(x => x._id == id).FirstOrDefaultAsync();
+
+        public async Task CreateBooking(Booking newBooking) => await _bookingsCollection.InsertOneAsync(newBooking);
     }
 }
