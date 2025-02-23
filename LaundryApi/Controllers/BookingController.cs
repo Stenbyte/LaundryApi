@@ -13,7 +13,11 @@ namespace LaundryBooking.Controllers
         public BookingController(BookingService bookingService) => _bookingService = bookingService;
 
         [HttpGet]
-        public async Task<List<Booking>> Get() => await _bookingService.GetBookings();
+        public async Task<List<Booking>> Get()
+        {
+            var bookings = await _bookingService.GetBookings();
+            return bookings;
+        }
 
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<Booking>> Get(string id)
