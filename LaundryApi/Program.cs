@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
-builder.Services.AddSingleton<BookingService>();
+builder.Services.AddSingleton<LaundryService>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
