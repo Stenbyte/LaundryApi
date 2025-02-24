@@ -15,10 +15,10 @@ namespace LaundryBooking.Services
             _bookingsCollection = mongoDataBase.GetCollection<Booking>(mongoDbSettings.Value.BookingsCollectionName);
         }
 
-        public async Task<List<Booking>> GetBookings() => await _bookingsCollection.Find(_ => true).ToListAsync();
+        // public async Task<List<Booking>> GetBookings() => await _bookingsCollection.Find(_ => true).ToListAsync();
 
-        public async Task<Booking?> GetBookingById(string id) => await _bookingsCollection.Find(x => x._id == id).FirstOrDefaultAsync();
+        // public async Task<Booking?> GetBookingById(string id) => await _bookingsCollection.Find(x => x._id == id).FirstOrDefaultAsync();
 
-        public async Task CreateBooking(Booking newBooking) => await _bookingsCollection.InsertOneAsync(newBooking);
+        // public async Task CreateBooking(Booking newBooking) => await _bookingsCollection.InsertOneAsync(newBooking);
     }
 }

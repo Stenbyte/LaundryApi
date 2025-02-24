@@ -17,5 +17,23 @@ namespace LaundryBooking.Services
         {
             return _database.GetCollection<T>(collectionName);
         }
+        public async Task<List<T>> GetAll<T>(string collectionName)
+        {
+            // TODO fix later to fetch only bookings for user
+            var collection = GetCollection<T>(collectionName);
+            return await collection.Find(_ => true).ToListAsync();
+        }
+
+        public async Task<T?> GetById<T>(string collectionName, string id) where T : IEntity
+        {
+            var collection = GetCollection<T>(collectionName);
+            return await collection.Find(x => x._id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task Create<T>(string collectionName, T entity)
+        {
+            var collection = GetCollection<T>(collectionName);
+            await collection.InsertOneAsync(entity);
+        }
     }
 }
