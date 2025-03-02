@@ -7,6 +7,6 @@ namespace LaundryBooking.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        string? _id { get; set; }
+        string? Id { get; set; }
     }
 }
