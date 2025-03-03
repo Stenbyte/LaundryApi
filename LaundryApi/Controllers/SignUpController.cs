@@ -15,7 +15,15 @@ namespace LaundryBooking.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(SignUp newUser)
         {
-            await _laundryService.Create<SignUp>(mongoSettings.Value.UsersCollectionName, newUser);
+            try
+            {
+                await _laundryService.Create<SignUp>(mongoSettings.Value.UsersCollectionName, newUser);
+
+            }
+            catch (Exception error)
+            {
+                throw new Exception("Something went wrong", error);
+            }
             return CreatedAtAction("Create", new { id = newUser.Id });
         }
     }
