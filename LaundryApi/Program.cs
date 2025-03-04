@@ -35,16 +35,10 @@ catch (Exception ex)
 
     throw new Exception($"------------🍎 MongoDB Connection failed: ${ex}------------");
 }
-if (app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/error-development");
-}
-else
-{
-    app.UseExceptionHandler("/error");
-}
+
 // Todo enable it for production
 // app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors("customPolicy");
 app.UseAuthorization();
 app.MapControllers();
