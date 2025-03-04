@@ -2,6 +2,7 @@ using LaundryBooking.Models;
 using Laundry.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using LaundryBooking.Exceptions;
 
 namespace LaundryBooking.Controllers
 {
@@ -15,15 +16,13 @@ namespace LaundryBooking.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(SignUp newUser)
         {
-            try
-            {
-                await _laundryService.Create<SignUp>(mongoSettings.Value.UsersCollectionName, newUser);
 
-            }
-            catch (Exception error)
+            await _laundryService.Create<SignUp>(mongoSettings.Value.UsersCollectionName, newUser);
+            if (newUser.Id == null)
             {
-                throw new Exception("Something went wrong", error);
+                throw new CustomException("Unable to create new user", null, 400);
             }
+
             return CreatedAtAction("Create", new { id = newUser.Id });
         }
     }
