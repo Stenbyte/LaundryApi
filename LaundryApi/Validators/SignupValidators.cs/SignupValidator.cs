@@ -3,7 +3,7 @@ using LaundryBooking.Models;
 
 namespace LaundryBooking.Validators
 {
-    public class SignUpValidator : AbstractValidator<SignUp>
+    public class SignUpValidator : AbstractValidator<SignUpUser>
     {
         public SignUpValidator()
         {

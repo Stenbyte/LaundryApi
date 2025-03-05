@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace LaundryBooking.Models
 {
-    public class SignUp : IEntity
+    public class SignUpUser : IEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
