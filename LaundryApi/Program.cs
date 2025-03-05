@@ -1,6 +1,9 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Laundry.Services;
 using LaundryBooking.Models;
 using Microsoft.Extensions.Options;
+using LaundryBooking.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,7 @@ builder.Services.Configure<MongoDBSettings>(
 builder.Services.AddSingleton<LaundryService>();
 
 builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters().AddValidatorsFromAssemblyContaining<SignUpValidator>();
 
 var app = builder.Build();
 
