@@ -6,10 +6,10 @@ namespace LaundryBooking.Models
     public class Adress
     {
         [BsonElement("streetName")]
-        public required string countryCode { get; set; }
+        public required string streetName { get; set; }
 
         [BsonElement("houseNumber")]
-        public required string number { get; set; }
+        public required string houseNumber { get; set; }
 
     }
 }
