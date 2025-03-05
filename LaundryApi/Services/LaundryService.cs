@@ -27,7 +27,7 @@ namespace Laundry.Services
                 throw new Exception("DataBase connection failed", ex);
             }
         }
-        public async Task Create<T>(string collectionName, T entity)
+        public async Task CreateUser<T>(string collectionName, T entity)
         {
             var collection = _database.GetCollection<T>(collectionName);
             await collection.InsertOneAsync(entity);

@@ -3,27 +3,33 @@ using Laundry.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using LaundryBooking.Exceptions;
+using MongoDB.Bson;
 
 namespace LaundryBooking.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SignUpController(LaundryService laundryService) : ControllerBase
+    public class SignUpController(LaundryService laundryService, IOptions<MongoDBSettings> mongoSettings) : ControllerBase
     {
         private readonly LaundryService _laundryService = laundryService;
-        private readonly IOptions<MongoDBSettings> mongoSettings = null!;
+        private readonly IOptions<MongoDBSettings> _mongoSettings = mongoSettings;
 
         [HttpPost]
         public async Task<IActionResult> Post(SignUp newUser)
         {
-
-            await _laundryService.Create<SignUp>(mongoSettings.Value.UsersCollectionName, newUser);
-            if (newUser.Id == null)
+            if (string.IsNullOrEmpty(newUser.Id))
             {
-                throw new CustomException("Unable to create new user", null, 400);
+                newUser.Id = ObjectId.GenerateNewId().ToString();
             }
-
-            return CreatedAtAction("Create", new { id = newUser.Id });
+            try
+            {
+                await _laundryService.CreateUser(_mongoSettings.Value.UsersCollectionName, newUser);
+            }
+            catch (CustomException ex)
+            {
+                throw new CustomException("Unable to create new user", ex, 400);
+            }
+            return CreatedAtAction(nameof(Post), new { id = newUser.Id });
         }
     }
 }
