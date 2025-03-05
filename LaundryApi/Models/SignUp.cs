@@ -14,14 +14,13 @@ namespace LaundryBooking.Models
         [BsonElement("lastName")]
         public required string lastName { get; set; }
 
-        [BsonElement("phone")]
-        public required string phone { get; set; }
+        [BsonElement("phoneNumber")]
+        public required PhoneNumber phoneNumber { get; set; }
 
         [BsonElement("password")]
         public required string password { get; set; }
-        [BsonElement("streetAdress")]
-        public required string streetadress { get; set; }
-        [BsonElement("adressNumber")]
-        public required string aadressNumber { get; set; }
+
+        [BsonElement("adress")]
+        public required Adress adress { get; set; }
     }
 }
