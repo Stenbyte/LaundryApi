@@ -8,10 +8,12 @@ namespace Laundry.Services
     public class LaundryService
     {
         private readonly IMongoDatabase _database;
+        private readonly IOptions<MongoDBSettings> _mongoSettings;
 
         public LaundryService(IOptions<MongoDBSettings> mongoSettings)
         {
             var mongoClient = new MongoClient(mongoSettings.Value.ConnectionString);
+            _mongoSettings = mongoSettings;
             _database = mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
         }
 
@@ -33,5 +35,13 @@ namespace Laundry.Services
             await collection.InsertOneAsync(entity);
         }
 
+        public async Task<T?> FindUserWithExisitingDb<T>(T newUser) where T : SignUpUser
+        {
+            var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
+
+            var existingDbName = await collection.Find(user => user.adress.streetName == newUser.adress.streetName).FirstOrDefaultAsync();
+
+            return existingDbName;
+        }
     }
 }
