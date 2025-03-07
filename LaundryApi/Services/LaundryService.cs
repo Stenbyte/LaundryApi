@@ -8,13 +8,19 @@ namespace LaundryApi.Services
     public class LaundryService
     {
         private readonly IMongoDatabase _database;
+        private readonly IMongoClient _mongoClient;
         private readonly IOptions<MongoDBSettings> _mongoSettings;
 
         public LaundryService(IOptions<MongoDBSettings> mongoSettings)
         {
-            var mongoClient = new MongoClient(mongoSettings.Value.ConnectionString);
+            _mongoClient = new MongoClient(mongoSettings.Value.ConnectionString);
             _mongoSettings = mongoSettings;
-            _database = mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
+            _database = _mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
+        }
+
+        public IMongoDatabase GetUserDatabase(string dbName)
+        {
+            return _mongoClient.GetDatabase(dbName);
         }
 
         public string TestConnection()
@@ -39,9 +45,9 @@ namespace LaundryApi.Services
         {
             var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
 
-            var existingDbName = await collection.Find(user => user.adress.streetName == newUser.adress.streetName).FirstOrDefaultAsync();
+            var existingUserWithDbName = await collection.Find(user => user.adress.streetName == newUser.adress.streetName).FirstOrDefaultAsync();
 
-            return existingDbName;
+            return existingUserWithDbName;
         }
     }
 }
