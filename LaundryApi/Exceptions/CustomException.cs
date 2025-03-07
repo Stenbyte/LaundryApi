@@ -1,6 +1,6 @@
 
 
-namespace LaundryBooking.Exceptions
+namespace LaundryApi.Exceptions
 {
     public class CustomException : Exception
     {

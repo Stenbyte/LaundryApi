@@ -1,12 +1,12 @@
-using LaundryBooking.Models;
-using Laundry.Services;
+using LaundryApi.Models;
+using LaundryApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using LaundryBooking.Exceptions;
+using LaundryApi.Exceptions;
 using MongoDB.Bson;
-using LaundryBooking.Validators;
+using LaundryApi.Validators;
 
-namespace LaundryBooking.Controllers
+namespace LaundryApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -39,6 +39,11 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("Unable to create new user", ex, 400);
             }
             return CreatedAtAction(nameof(Post), new { id = newUser.Id });
+        }
+
+        private async Task AddDbNameToUser(SignUpUser newUser)
+        {
+            var existingDbName = await _laundryService.FindUserWithExisitingDb(newUser);
         }
     }
 }

@@ -1,9 +1,8 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Laundry.Services;
-using LaundryBooking.Models;
-using Microsoft.Extensions.Options;
-using LaundryBooking.Validators;
+using LaundryApi.Services;
+using LaundryApi.Models;
+using LaundryApi.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +35,6 @@ try
 }
 catch (Exception ex)
 {
-
     throw new Exception($"------------🍎 MongoDB Connection failed: ${ex}------------");
 }
 

@@ -1,7 +1,7 @@
 using FluentValidation;
-using LaundryBooking.Models;
+using LaundryApi.Models;
 
-namespace LaundryBooking.Validators
+namespace LaundryApi.Validators
 {
     public class SignUpValidator : AbstractValidator<SignUpUser>
     {

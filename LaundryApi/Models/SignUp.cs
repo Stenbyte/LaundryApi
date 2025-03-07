@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace LaundryBooking.Models
+namespace LaundryApi.Models
 {
     public class SignUpUser : IEntity
     {
@@ -22,5 +22,7 @@ namespace LaundryBooking.Models
 
         [BsonElement("adress")]
         public required Adress adress { get; set; }
+        [BsonElement("dbName")]
+        public required Adress dbName { get; set; }
     }
 }

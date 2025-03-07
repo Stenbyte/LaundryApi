@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using LaundryBooking.Models;
+using LaundryApi.Models;
 using MongoDB.Bson;
 
-namespace Laundry.Services
+namespace LaundryApi.Services
 {
     public class LaundryService
     {

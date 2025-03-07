@@ -1,4 +1,4 @@
-namespace LaundryBooking.Models
+namespace LaundryApi.Models
 {
     public class MongoDBSettings
     {

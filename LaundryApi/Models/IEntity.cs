@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace LaundryBooking.Models
+namespace LaundryApi.Models
 {
     public interface IEntity
     {
