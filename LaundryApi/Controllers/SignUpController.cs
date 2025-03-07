@@ -32,6 +32,7 @@ namespace LaundryApi.Controllers
 
             try
             {
+                await AddDbNameToUser(newUser);
                 await _laundryService.CreateUser(_mongoSettings.Value.UsersCollectionName, newUser);
             }
             catch (CustomException ex)
@@ -43,7 +44,15 @@ namespace LaundryApi.Controllers
 
         private async Task AddDbNameToUser(SignUpUser newUser)
         {
-            var existingDbName = await _laundryService.FindUserWithExisitingDb(newUser);
+            var existingUserWithDbName = await _laundryService.FindUserWithExisitingDb(newUser);
+            if (existingUserWithDbName != null)
+            {
+                newUser.dbName = existingUserWithDbName.dbName;
+            }
+            else
+            {
+                newUser.dbName = $"Laundry_{newUser.adress.streetName.Replace(" ", "_")}";
+            }
         }
     }
 }
