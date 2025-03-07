@@ -23,6 +23,6 @@ namespace LaundryApi.Models
         [BsonElement("adress")]
         public required Adress adress { get; set; }
         [BsonElement("dbName")]
-        public required Adress dbName { get; set; }
+        public required string dbName { get; set; }
     }
 }
