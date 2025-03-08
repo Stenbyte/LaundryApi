@@ -13,7 +13,7 @@ public class JwtService
         _configuration = configuration;
     }
 
-    public string GenerateJwtToken(SignUpUser user)
+    public string GenerateJwtToken(User user)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");
         var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);

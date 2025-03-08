@@ -17,7 +17,7 @@ namespace LaundryApi.Controllers
         private readonly SignUpValidator _validator = signupValidator;
 
         [HttpPost]
-        public async Task<IActionResult> Post(SignUpUser newUser)
+        public async Task<IActionResult> Post(User newUser)
         {
             if (string.IsNullOrEmpty(newUser.Id))
             {
@@ -42,7 +42,7 @@ namespace LaundryApi.Controllers
             return CreatedAtAction(nameof(Post), new { id = newUser.Id });
         }
 
-        private async Task AddDbNameToUser(SignUpUser newUser)
+        private async Task AddDbNameToUser(User newUser)
         {
             var existingUserWithDbName = await _laundryService.FindUserWithExisitingDb(newUser);
             if (existingUserWithDbName != null)

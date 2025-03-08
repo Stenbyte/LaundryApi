@@ -3,7 +3,7 @@ using LaundryApi.Models;
 
 namespace LaundryApi.Validators
 {
-    public class SignUpValidator : AbstractValidator<SignUpUser>
+    public class SignUpValidator : AbstractValidator<User>
     {
         public SignUpValidator()
         {
