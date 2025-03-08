@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using LaundryBooking.Exceptions;
+using LaundryApi.Exceptions;
 
 public class ExceptionHandlingMiddleware
 {
