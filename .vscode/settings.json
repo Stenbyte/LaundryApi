@@ -1,5 +1,7 @@
 {
   "[csharp]": {
     "editor.formatOnSave": true
-  }
+  },
+  "editor.formatOnSave": true,
+  "dotnet.server.useOmnisharp": true
 }
