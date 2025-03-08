@@ -13,6 +13,8 @@ namespace LaundryApi.Models
         public required string firstName { get; set; }
         [BsonElement("lastName")]
         public required string lastName { get; set; }
+        [BsonElement("email")]
+        public required string email { get; set; }
 
         [BsonElement("phoneNumber")]
         public required PhoneNumber phoneNumber { get; set; }
