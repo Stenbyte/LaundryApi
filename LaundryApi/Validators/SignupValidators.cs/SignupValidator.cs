@@ -25,6 +25,8 @@ namespace LaundryApi.Validators
             .Matches(@"\d").WithMessage("Password must contain at least one number")
             .Matches(@"[@$!%*?&]").WithMessage("Password must contain at least one special character");
 
+            RuleFor(x => x.email).NotEmpty().WithMessage("email is required").Matches(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").WithMessage("Invalid email format");
+
             RuleFor(x => x.phoneNumber).SetValidator(new PhoneNumberValidator());
             RuleFor(x => x.adress).SetValidator(new AdressValidator());
         }

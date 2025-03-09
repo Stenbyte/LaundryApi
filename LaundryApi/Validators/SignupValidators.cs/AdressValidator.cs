@@ -12,7 +12,7 @@ namespace LaundryApi.Validators
             .MaximumLength(100)
             .WithMessage("Max street name is 100 characters");
 
-            RuleFor(x => x.houseNumber).NotEmpty()
+            RuleFor(x => x.houseNumber).NotEmpty().Matches(@"^[1-9]\d*$")
             .WithMessage("House Number is required");
         }
     }
