@@ -49,5 +49,13 @@ namespace LaundryApi.Services
 
             return existingUserWithDbName;
         }
+        public async Task<T?> FindUserByEmail<T>(string email) where T : User
+        {
+            var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
+
+            var existingUserWithDbName = await collection.Find(user => user.email == email).FirstOrDefaultAsync();
+
+            return existingUserWithDbName;
+        }
     }
 }
