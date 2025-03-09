@@ -30,9 +30,11 @@ namespace LaundryApi.Controllers
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
 
+            var isUserExist = await _laundryService.FindUser(newUser);
+
             try
             {
-                await AddDbNameToUser(newUser);
+                AddDbNameToUser(newUser, isUserExist);
                 await _laundryService.CreateUser(_mongoSettings.Value.UsersCollectionName, newUser);
             }
             catch (CustomException ex)
@@ -42,17 +44,17 @@ namespace LaundryApi.Controllers
             return CreatedAtAction(nameof(Post), new { id = newUser.Id });
         }
 
-        private async Task AddDbNameToUser(User newUser)
+        private static User AddDbNameToUser(User newUser, User? existingUser)
         {
-            var existingUserWithDbName = await _laundryService.FindUserWithExisitingDb(newUser);
-            if (existingUserWithDbName != null)
+            if (existingUser != null)
             {
-                newUser.dbName = existingUserWithDbName.dbName;
+                newUser.dbName = existingUser.dbName;
             }
             else
             {
                 newUser.dbName = $"Laundry_{newUser.adress.streetName.Replace(" ", "_")}";
             }
+            return newUser;
         }
     }
 }
