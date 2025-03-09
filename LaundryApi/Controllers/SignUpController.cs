@@ -18,7 +18,7 @@ namespace LaundryApi.Controllers
         private readonly SignUpValidator _validator = signupValidator;
         private readonly JwtService _jwtService = jwtService;
 
-        [HttpPost("signup")]
+        [HttpPost]
         public async Task<IActionResult> CreateUser(User newUser)
         {
             if (string.IsNullOrEmpty(newUser.Id))
