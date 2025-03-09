@@ -45,15 +45,23 @@ namespace LaundryApi.Services
         {
             var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
 
-            var existingUserWithDbName = await collection.Find(user => user.Id == newUser.Id).FirstOrDefaultAsync();
+            var existingUser = await collection.Find(user => user.Id == newUser.Id).FirstOrDefaultAsync();
 
-            return existingUserWithDbName;
+            return existingUser;
         }
         public async Task<T?> FindUserByEmail<T>(string email) where T : User
         {
             var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
 
             var existingUserWithDbName = await collection.Find(user => user.email == email).FirstOrDefaultAsync();
+
+            return existingUserWithDbName;
+        }
+        public async Task<T?> FindExistingUserWithDbName<T>(T newUser) where T : User
+        {
+            var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
+
+            var existingUserWithDbName = await collection.Find(user => user.adress.streetName == newUser.adress.streetName).FirstOrDefaultAsync();
 
             return existingUserWithDbName;
         }
