@@ -1,16 +1,29 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using LaundryApi.Controllers;
 
-namespace LaundryApi.Controllers{
+namespace LaundryApi.Controllers
+{
 
     [Authorize]
     [Route("api/protected")]
     [ApiController]
-    public class ProtectedController : ControllerBase{
+    public class ProtectedController : ControllerBase
+    {
+
+        private readonly AuthController _auth;
+
+        public ProtectedController(AuthController auth)
+        {
+            _auth = auth;
+        }
 
         [HttpGet]
-        public IActionResult GetProtectedData(){
-            return Ok(new {message = "You have accessed a protoected resource!!!"});
+        public IActionResult GetProtectedData()
+        {
+
+            var userData = _auth.GetUserInfo();
+            return Ok(new { message = "You have accessed a protoected resource!!!", data = userData });
         }
     }
 }

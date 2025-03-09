@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity.Data;
 using LaundryApi.Models;
 using LaundryApi.Validators;
 using LaundryApi.Exceptions;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace LaundryApi.Controllers
 {
@@ -39,6 +41,15 @@ namespace LaundryApi.Controllers
             }
             var token = _jwtService.GenerateJwtToken(user);
             return Ok(new { token });
+        }
+
+        [HttpGet("userInfo")]
+        public IActionResult GetUserInfo()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = User.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
+            var streetName = User.FindFirst("streetName")?.Value;
+            return Ok(new { userId, email, streetName });
         }
     }
 }
