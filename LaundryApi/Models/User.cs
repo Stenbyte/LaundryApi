@@ -26,5 +26,9 @@ namespace LaundryApi.Models
         public required Adress adress { get; set; }
         [BsonElement("dbName")]
         public string dbName { get; set; } = "";
+        [BsonElement("refreshToken")]
+        public string? refreshToken { get; set; }
+        [BsonElement("refreshTokenExpiry")]
+        public DateTime? refreshTokenExpiry { get; set; }
     }
 }
