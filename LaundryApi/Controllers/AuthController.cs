@@ -13,7 +13,6 @@ namespace LaundryApi.Controllers
 
     [ApiController]
     [Route("api/[controller]")]
-    [Consumes("application/json")]
     public class AuthController : ControllerBase
     {
         private readonly JwtService _jwtService;
@@ -41,10 +40,7 @@ namespace LaundryApi.Controllers
                 return Unauthorized(new { message = "Invalid credentials" });
             }
             var token = _jwtService.GenerateJwtToken(user);
-            var refreshToken = _jwtService.GenerateRefreshToken();
-
-            await _layndryService.UpdateUser(user);
-            return Ok(new { token, refreshToken });
+            return Ok(new { token });
         }
 
         [HttpGet("userInfo")]
