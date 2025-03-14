@@ -21,9 +21,10 @@ builder.Services.AddCors(options => {
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes("Secret");
 
+
 builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    // options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options => {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
@@ -33,7 +34,8 @@ builder.Services.AddAuthentication(options => {
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+        IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -41,6 +43,7 @@ builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
 builder.Services.AddSingleton<LaundryService>();
+builder.Services.AddSingleton<JwtService>();
 
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters().AddValidatorsFromAssemblyContaining<SignUpValidator>();
@@ -64,8 +67,8 @@ catch (Exception ex)
 // Todo enable it for production
 // app.UseHttpsRedirection();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseCors("customPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("customPolicy");
 app.MapControllers();
 app.Run();
