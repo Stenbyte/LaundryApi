@@ -6,6 +6,7 @@ using LaundryApi.Validators;
 using LaundryApi.Exceptions;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LaundryApi.Controllers
 {
@@ -45,14 +46,25 @@ namespace LaundryApi.Controllers
             }
             var token = _jwtService.GenerateJwtToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
+
             user.refreshToken = refreshToken;
             user.refreshTokenExpiry = DateTime.UtcNow
             .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));
             await _layndryService.UpdateUser(user);
-            return Ok(new { token, refreshToken });
+
+            Response.Cookies.Append("access_token", token, new CookieOptions {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["AccessTokenExpirationMinutes"]!))
+            });
+
+
+            return Ok(new { refreshToken });
         }
 
         [HttpGet("userInfo")]
+        [Authorize]
         public IActionResult GetUserInfo()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -81,7 +93,14 @@ namespace LaundryApi.Controllers
 
             await _layndryService.UpdateUser(user);
 
-            return Ok(new { newAccessToken, newRefreshToken });
+            Response.Cookies.Append("access_token", newAccessToken, new CookieOptions {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["AccessTokenExpirationMinutes"]!))
+            });
+
+            return Ok(new { refreshToken = newRefreshToken });
         }
     }
 
