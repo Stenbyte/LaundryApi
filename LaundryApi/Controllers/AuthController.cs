@@ -43,6 +43,7 @@ namespace LaundryApi.Controllers
             var token = _jwtService.GenerateJwtToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
             user.refreshToken = refreshToken;
+            user.refreshTokenExpiry = DateTime.UtcNow.AddDays(7);
             await _layndryService.UpdateUser(user);
             return Ok(new { token, refreshToken });
         }
@@ -70,6 +71,7 @@ namespace LaundryApi.Controllers
             var newRefreshToken = _jwtService.GenerateRefreshToken();
 
             user.refreshToken = newRefreshToken;
+            // use time from app settings
             user.refreshTokenExpiry = DateTime.UtcNow.AddDays(7);
             await _layndryService.UpdateUser(user);
 
