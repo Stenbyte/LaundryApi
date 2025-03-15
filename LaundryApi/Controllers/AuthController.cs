@@ -41,7 +41,7 @@ namespace LaundryApi.Controllers
                 return Unauthorized(new { message = "Invalid credentials" });
             }
             var token = _jwtService.GenerateJwtToken(user);
-            var refreshToken = _jwtService.GenerateJwtToken();
+            var refreshToken = _jwtService.GenerateRefreshToken();
             return Ok(new { token, refreshToken });
         }
 
