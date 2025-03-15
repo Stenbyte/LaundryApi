@@ -42,6 +42,8 @@ namespace LaundryApi.Controllers
             }
             var token = _jwtService.GenerateJwtToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
+            user.refreshToken = refreshToken;
+            await _layndryService.UpdateUser(user);
             return Ok(new { token, refreshToken });
         }
 
@@ -53,5 +55,30 @@ namespace LaundryApi.Controllers
             var streetName = User.FindFirst("streetName")?.Value;
             return Ok(new { userId, email, streetName });
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
+        {
+            User? user = await _layndryService.FindUserByRefreshToken<User>(request.refreshToken);
+
+            if (user == null || user.refreshTokenExpiry < DateTime.UtcNow)
+            {
+                return Unauthorized(new { message = "Invalid or expired refresh token" });
+            }
+
+            var newAccessToken = _jwtService.GenerateJwtToken(user);
+            var newRefreshToken = _jwtService.GenerateRefreshToken();
+
+            user.refreshToken = newRefreshToken;
+            user.refreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+            await _layndryService.UpdateUser(user);
+
+            return Ok(new { newAccessToken, newRefreshToken });
+        }
+    }
+
+    public class TokenRequest
+    {
+        public required string refreshToken;
     }
 }
