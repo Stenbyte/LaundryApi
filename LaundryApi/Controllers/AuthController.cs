@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using BCrypt.Net;
 using LaundryApi.Services;
 using Microsoft.AspNetCore.Identity.Data;
 using LaundryApi.Models;
