@@ -59,8 +59,28 @@ namespace LaundryApi.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["AccessTokenExpirationMinutes"]!))
             });
 
-
             return Ok(new { refreshToken });
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LoginRequest request)
+        {
+            var validationResult = await _validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                throw new CustomException("Validation", validationResult.Errors, 400);
+            }
+
+            var existingUser = await _layndryService.FindUserByEmail<User>(request.Email);
+            if (existingUser == null) return Unauthorized();
+
+            existingUser.refreshToken = null;
+
+            await _layndryService.UpdateUser(existingUser);
+
+            Response.Cookies.Delete("access_token");
+
+            return Ok(new { message = "Logged out" });
         }
 
         [HttpGet("userInfo")]
