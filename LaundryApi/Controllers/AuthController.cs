@@ -52,17 +52,18 @@ namespace LaundryApi.Controllers
             .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));
             await _layndryService.UpdateUser(user);
 
-            Response.Cookies.Append("access_token", token, new CookieOptions {
+            Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["AccessTokenExpirationMinutes"]!))
             });
 
-            return Ok(new { refreshToken });
+            return Ok(new { token });
         }
 
         [HttpPost("logout")]
+        [Authorize]
         public async Task<IActionResult> Logout([FromBody] LoginRequest request)
         {
             var validationResult = await _validator.ValidateAsync(request);
@@ -78,7 +79,7 @@ namespace LaundryApi.Controllers
 
             await _layndryService.UpdateUser(existingUser);
 
-            Response.Cookies.Delete("access_token");
+            Response.Cookies.Delete("refresh_token");
 
             return Ok(new { message = "Logged out" });
         }
@@ -113,14 +114,14 @@ namespace LaundryApi.Controllers
 
             await _layndryService.UpdateUser(user);
 
-            Response.Cookies.Append("access_token", newAccessToken, new CookieOptions {
+            Response.Cookies.Append("refresh_token", newRefreshToken, new CookieOptions {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["AccessTokenExpirationMinutes"]!))
             });
 
-            return Ok(new { refreshToken = newRefreshToken });
+            return Ok(new { accessToken = newAccessToken });
         }
     }
 

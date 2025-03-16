@@ -13,13 +13,14 @@ builder.Services.AddCors(options => {
     options.AddPolicy(name: "customPolicy", policy => {
         policy.WithOrigins("http://localhost:5173")
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 }
 );
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = Encoding.UTF8.GetBytes("Secret");
+var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
 
 
 builder.Services.AddAuthentication(options => {
@@ -34,6 +35,7 @@ builder.Services.AddAuthentication(options => {
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(secretKey),
         ClockSkew = TimeSpan.Zero
     };
@@ -66,9 +68,9 @@ catch (Exception ex)
 
 // Todo enable it for production
 // app.UseHttpsRedirection();
+app.UseCors("customPolicy");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("customPolicy");
 app.MapControllers();
 app.Run();
