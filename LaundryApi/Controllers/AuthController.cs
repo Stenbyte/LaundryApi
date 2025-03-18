@@ -89,7 +89,7 @@ namespace LaundryApi.Controllers
         public IActionResult GetUserInfo()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var email = User.FindFirst(JwtRegisteredClaimNames.Email)?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
             var streetName = User.FindFirst("streetName")?.Value;
             return Ok(new { userId, email, streetName });
         }
