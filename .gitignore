@@ -1,0 +1,8 @@
+obj/
+bin/
+*.dll
+.editorconfig
+settings.json
+.vscode
+appsettings.json
+appsettings.Development.json

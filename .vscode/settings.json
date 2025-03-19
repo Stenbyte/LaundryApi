@@ -3,5 +3,25 @@
     "editor.formatOnSave": true
   },
   "editor.formatOnSave": true,
-  "dotnet.server.useOmnisharp": true
+  "dotnet.server.useOmnisharp": true,
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#201335",
+    "activityBar.background": "#201335",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#0081A7",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#fa1b49",
+    "statusBar.background": "#201335",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#fa1b49",
+    "statusBarItem.remoteBackground": "#dd0531",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#201335",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#dd053199",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#dd0531"
 }
