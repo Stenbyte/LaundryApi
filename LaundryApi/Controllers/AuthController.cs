@@ -18,23 +18,25 @@ namespace LaundryApi.Controllers
     {
         private readonly JwtService _jwtService;
         private readonly LaundryService _layndryService;
-        private readonly LoginValidator _validator;
+        private readonly LoginValidator _loginValidator;
+        private readonly LogOutValidator _logOutValidator;
         private readonly IConfiguration _configuration;
 
 
-        public AuthController(JwtService jwtService, LaundryService laundryService, LoginValidator validator, IConfiguration configuration)
+        public AuthController(JwtService jwtService, LaundryService laundryService, LoginValidator validator, IConfiguration configuration, LogOutValidator logOutValidator)
         {
             _jwtService = jwtService;
             _layndryService = laundryService;
-            _validator = validator;
+            _loginValidator = validator;
             _configuration = configuration;
+            _logOutValidator = logOutValidator;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            var validationResult = await _validator.ValidateAsync(request);
+            var validationResult = await _loginValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
                 throw new CustomException("Validation", validationResult.Errors, 400);
@@ -64,15 +66,15 @@ namespace LaundryApi.Controllers
 
         [HttpPost("logout")]
         [Authorize]
-        public async Task<IActionResult> Logout([FromBody] LoginRequest request)
+        public async Task<IActionResult> Logout([FromBody] LogOutRequest request)
         {
-            var validationResult = await _validator.ValidateAsync(request);
+            var validationResult = await _logOutValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
 
-            var existingUser = await _layndryService.FindUserByEmail<User>(request.Email);
+            var existingUser = await _layndryService.FindUserByEmail<User>(request.email);
             if (existingUser == null) return Unauthorized();
 
             existingUser.refreshToken = null;
