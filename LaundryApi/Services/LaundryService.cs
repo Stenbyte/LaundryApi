@@ -43,11 +43,11 @@ namespace LaundryApi.Services
             await collection.InsertOneAsync(entity);
         }
 
-        public async Task<T?> FindUser<T>(T newUser) where T : User
+        public async Task<T?> FindUserById<T>(string userId) where T : User
         {
             var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
 
-            var existingUser = await collection.Find(user => user.Id == newUser.Id).FirstOrDefaultAsync();
+            var existingUser = await collection.Find(user => user.Id == userId).FirstOrDefaultAsync();
 
             return existingUser;
         }
