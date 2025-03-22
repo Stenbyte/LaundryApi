@@ -14,13 +14,20 @@ namespace LaundryApi.Models
         [BsonElement("machineId")]
         public string? machineId { get; set; }
 
-        [BsonElement("timeSlot")]
-        public required string timeSlot { get; set; } = string.Empty;
-
-        [BsonElement("day")]
-        public required DateTime day { get; set; }
+        [BsonElement("slots")]
+        public List<BookingSlot> slots { get; set; } = new();
 
         [BsonElement("reservationsLeft")]
         public int reservationsLeft { get; set; } = 3;
+    }
+    public class BookingSlot
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
+        [BsonElement("day")]
+        public required DateTime day { get; set; }
+
+        [BsonElement("timeSlots")]
+        public List<string> timeSlots { get; set; } = new();
     }
 }
