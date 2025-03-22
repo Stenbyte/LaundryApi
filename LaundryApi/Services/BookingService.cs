@@ -1,4 +1,5 @@
 using LaundryApi.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -18,15 +19,19 @@ namespace LaundryBooking.Services
         {
             return await _bookingsCollection.Find(_ => true).ToListAsync();
         }
-        // public async Task<List<Booking>> GetBookings() => await _bookingsCollection.Find(_ => true).ToListAsync();
+
+        public async Task<Booking> CreateBooking(Booking newBooking)
+        {
+
+            await _bookingsCollection.InsertOneAsync(newBooking);
+
+            return newBooking;
+
+        }
+
 
         // public async Task<Booking?> GetBookingById(string id) => await _bookingsCollection.Find(x => x._id == id).FirstOrDefaultAsync();
 
-        // public async Task CreateBooking(Booking newBooking) => await _bookingsCollection.InsertOneAsync(newBooking);
-        // public IMongoCollection<T> GetCollection<T>(string collectionName)
-        // {
-        //     return _database.GetCollection<T>(collectionName);
-        // }
 
 
         // public async Task<T?> GetById<T>(string collectionName, string id) where T : IEntity
