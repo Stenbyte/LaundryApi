@@ -46,13 +46,7 @@ namespace LaundryApi.Validators
             .Matches(@"[@$!%*?&]").WithMessage("Password must contain at least one special character");
         }
     }
-    public class LogOutRequest
-    {
-        /// <summary>
-        /// The user's email address which acts as a user name.
-        /// </summary>
-        public required string email { get; init; }
-    }
+
     public class LogOutValidator : AbstractValidator<LogOutRequest>
     {
         public LogOutValidator()
