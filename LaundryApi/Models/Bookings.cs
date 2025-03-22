@@ -10,11 +10,17 @@ namespace LaundryApi.Models
         public string? Id { get; set; }
 
         [BsonElement("userId")]
-        public string userId { get; set; } = null!;
+        public required string userId { get; set; } = string.Empty;
         [BsonElement("machineId")]
         public string? machineId { get; set; }
 
         [BsonElement("timeSlot")]
-        public DateTime timeSlot { get; set; }
+        public required string timeSlot { get; set; } = string.Empty;
+
+        [BsonElement("day")]
+        public required DateTime day { get; set; }
+
+        [BsonElement("reservationsLeft")]
+        public int reservationsLeft { get; set; } = 3;
     }
 }
