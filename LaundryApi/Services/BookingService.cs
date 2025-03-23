@@ -26,7 +26,20 @@ namespace LaundryBooking.Services
             await _bookingsCollection.InsertOneAsync(newBooking);
 
             return newBooking;
+        }
+        public async Task<Booking> UpdateBooking(Booking existingBooking)
+        {
 
+            var filter = Builders<Booking>.Filter.Eq(booking => booking.Id, existingBooking.Id);
+            var update = Builders<Booking>.Update.Set(booking => booking.slots, existingBooking.slots).Set(booking => booking.reservationsLeft, existingBooking.reservationsLeft);
+            await _bookingsCollection.UpdateOneAsync(filter, update);
+
+            return existingBooking;
+        }
+
+        public async Task<Booking> GetBookingsById(string userId)
+        {
+            return await _bookingsCollection.Find(booking => booking.userId == userId).FirstOrDefaultAsync();
         }
 
 
