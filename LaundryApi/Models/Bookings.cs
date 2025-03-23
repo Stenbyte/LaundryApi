@@ -26,6 +26,11 @@ namespace LaundryApi.Models
         public string? Id { get; set; }
         [BsonElement("day")]
         public required DateTime day { get; set; }
+        public bool booked { get; set; } = false;
+        public void ConvertToUtc()
+        {
+            day = DateTime.SpecifyKind(day, DateTimeKind.Utc);
+        }
 
         [BsonElement("timeSlots")]
         public List<string> timeSlots { get; set; } = new();
