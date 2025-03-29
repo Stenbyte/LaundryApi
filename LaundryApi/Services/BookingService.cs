@@ -30,7 +30,7 @@ namespace LaundryBooking.Services
         public async Task<Booking> UpdateBooking(Booking existingBooking)
         {
 
-            var filter = Builders<Booking>.Filter.Eq(booking => booking.Id, existingBooking.Id);
+            var filter = Builders<Booking>.Filter.Eq(booking => booking.id, existingBooking.id);
             var update = Builders<Booking>.Update.Set(booking => booking.slots, existingBooking.slots).Set(booking => booking.reservationsLeft, existingBooking.reservationsLeft);
             await _bookingsCollection.UpdateOneAsync(filter, update);
 
@@ -43,20 +43,22 @@ namespace LaundryBooking.Services
         }
 
 
-        // public async Task<Booking?> GetBookingById(string id) => await _bookingsCollection.Find(x => x._id == id).FirstOrDefaultAsync();
+        public async Task<Booking> FindBySlotId(string bookingSlotId)
+        {
+            return await _bookingsCollection.Find(b => b.slots.Any(slot => slot.id == bookingSlotId)).FirstOrDefaultAsync();
+        }
 
 
-
-        // public async Task<T?> GetById<T>(string collectionName, string id) where T : IEntity
-        // {
-        //     var collection = GetCollection<T>(collectionName);
-        //     return await collection.Find(x => x._id == id).FirstOrDefaultAsync();
-        // }
-
-        // public async Task Create<T>(string collectionName, T entity)
-        // {
-        //     var collection = GetCollection<T>(collectionName);
-        //     await collection.InsertOneAsync(entity);
-        // }
-    }
+        //         public async Task<T?> GetById<T>(string collectionName, string id) where T : IEntity
+        //         {
+        //             var collection = GetCollection<T>(collectionName);
+        //             return await collection.Find(x => x._id == id).FirstOrDefaultAsync();
+        //         }
+        // 
+        //         public async Task Create<T>(string collectionName, T entity)
+        //         {
+        //             var collection = GetCollection<T>(collectionName);
+        //             await collection.InsertOneAsync(entity);
+        //         }
+    };
 }
