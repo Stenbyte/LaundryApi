@@ -7,6 +7,6 @@ namespace LaundryApi.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        string? Id { get; set; }
+        string? id { get; set; }
     }
 }

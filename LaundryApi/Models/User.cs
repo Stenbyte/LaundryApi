@@ -7,7 +7,7 @@ namespace LaundryApi.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string? id { get; set; }
 
         [BsonElement("firstName")]
         public required string firstName { get; set; }

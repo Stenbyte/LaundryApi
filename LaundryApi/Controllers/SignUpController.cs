@@ -20,9 +20,9 @@ namespace LaundryApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(User newUser)
         {
-            if (string.IsNullOrEmpty(newUser.Id))
+            if (string.IsNullOrEmpty(newUser.id))
             {
-                newUser.Id = ObjectId.GenerateNewId().ToString();
+                newUser.id = ObjectId.GenerateNewId().ToString();
             }
             var validationResult = await _validator.ValidateAsync(newUser);
 
@@ -49,7 +49,7 @@ namespace LaundryApi.Controllers
             {
                 throw new CustomException("Unable to create new user", ex, 400);
             }
-            return CreatedAtAction(nameof(CreateUser), new { id = newUser.Id });
+            return CreatedAtAction(nameof(CreateUser), new { id = newUser.id });
         }
 
         private async Task<User> AddDbNameToUser(User newUser)

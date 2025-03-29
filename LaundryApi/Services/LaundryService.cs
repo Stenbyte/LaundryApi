@@ -47,7 +47,7 @@ namespace LaundryApi.Services
         {
             var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
 
-            var existingUser = await collection.Find(user => user.Id == userId).FirstOrDefaultAsync();
+            var existingUser = await collection.Find(user => user.id == userId).FirstOrDefaultAsync();
 
             return existingUser;
         }
@@ -80,7 +80,7 @@ namespace LaundryApi.Services
         {
             var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
 
-            var filter = Builders<T>.Filter.Eq(user => user.Id, userToUpdate.Id);
+            var filter = Builders<T>.Filter.Eq(user => user.id, userToUpdate.id);
             var update = Builders<T>.Update
                 .Set(u => u.refreshToken, userToUpdate.refreshToken)
                 .Set(u => u.refreshTokenExpiry, userToUpdate.refreshTokenExpiry);
