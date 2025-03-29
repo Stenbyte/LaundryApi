@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using LaundryBooking.Services;
 using System.Security.Claims;
 using LaundryApi.Exceptions;
+using MongoDB.Bson;
+using LaundryApi.Validators;
 
 namespace LaundryBooking.Controllers
 {
@@ -16,6 +18,7 @@ namespace LaundryBooking.Controllers
     {
         private readonly LaundryService _laundryService = laundryService;
         private readonly IOptions<MongoDBSettings> _mongoSettings = mongoSettings;
+
 
         [HttpGet("getAll")]
         public async Task<List<Booking>> Get()
@@ -29,24 +32,91 @@ namespace LaundryBooking.Controllers
             }
 
             var _bookingService = new BookingService(_mongoSettings, user.dbName);
-            var bookings = await _bookingService.GetAll();
+            List<Booking> bookings = await _bookingService.GetAll();
             return bookings;
         }
 
-        //         [HttpGet("{id:length(24)}")]
-        //         public async Task<ActionResult<Booking>> Get(string id)
-        //         {
-        //             var booking = await _laundryService.GetById<Booking>(mongoSettings.Value.BookingsCollectionName, id);
-        //             if (booking is null)
-        //                 return NotFound();
-        // 
-        //             return booking;
-        //         }
-        // [HttpPost]
-        // public async Task<IActionResult> Post(Booking newBooking)
-        // {
-        //     await _laundryService.Create<Booking>(mongoSettings.Value.BookingsCollectionName, newBooking);
-        //     return CreatedAtAction(nameof(Get), new { id = newBooking._id }, newBooking);
-        // }
+
+        [HttpPost("create")]
+
+        public async Task<IActionResult> CreateBooking([FromBody] BookingSlot request)
+        {
+
+            if (TimeSlotValidator.IsTimeSlotInThePast(request.timeSlots))
+            {
+                throw new CustomException("Cannot create a reservation for a past time", null, 400);
+            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            User? user = await _laundryService.FindUserById<User>(userId!);
+            if (user == null)
+            {
+                throw new CustomException("user is not found", null, 404);
+            }
+
+            var _bookingService = new BookingService(_mongoSettings, user.dbName);
+
+            Booking? existingBooking = await _bookingService.GetBookingsById(userId!);
+            Booking bookingToReturn;
+            request.id = ObjectId.GenerateNewId().ToString();
+            request.ConvertToUtc();
+            request.booked = true;
+            if (existingBooking != null)
+            {
+                if (existingBooking?.reservationsLeft == 0)
+                {
+                    throw new CustomException("You can not add new reservation", null, 403);
+                }
+
+                existingBooking!.slots.Add(request);
+                existingBooking!.reservationsLeft--;
+                bookingToReturn = existingBooking;
+                await _bookingService.UpdateBooking(bookingToReturn);
+            }
+            else
+            {
+                var newBooking = new Booking {
+                    userId = userId!,
+                    slots = new List<BookingSlot> { request },
+                    reservationsLeft = 2
+                };
+                bookingToReturn = newBooking;
+                await _bookingService.CreateBooking(bookingToReturn);
+            }
+
+
+            return CreatedAtAction(nameof(CreateBooking), new { id = bookingToReturn.id });
+
+        }
+
+        [HttpPost("edit")]
+        public async Task<IActionResult> EditBookingById([FromBody] EditBookingRequest request)
+        {
+            if (!ObjectId.TryParse(request.id, out _))
+            {
+                return BadRequest("Invalid booking ID");
+            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            User? user = await _laundryService.FindUserById<User>(userId!);
+
+            if (user == null)
+            {
+                throw new CustomException("user is not found", null, 404);
+            }
+
+            var _bookingService = new BookingService(_mongoSettings, user.dbName);
+
+            var existingBooking = await _bookingService.FindBySlotId(request.id);
+            if (existingBooking == null)
+            {
+                return NotFound("Bookings is not found");
+            }
+            existingBooking.slots = existingBooking.slots.Where(slot => slot.id != request.id).ToList();
+            existingBooking.reservationsLeft++;
+
+            await _bookingService.UpdateBooking(existingBooking);
+            return CreatedAtAction(nameof(EditBookingById), new { existingBooking.id });
+        }
     }
 }
