@@ -35,4 +35,8 @@ namespace LaundryApi.Models
         [BsonElement("timeSlots")]
         public List<string> timeSlots { get; set; } = new();
     }
+    public class EditBookingRequest
+    {
+        public string id { get; set; } = null!;
+    }
 }
