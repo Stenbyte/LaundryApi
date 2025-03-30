@@ -67,6 +67,7 @@ namespace LaundryBooking.Controllers
                 {
                     throw new CustomException("You can not add new reservation", null, 403);
                 }
+                // here check if slot is already taken
 
                 existingBooking!.slots.Add(request);
                 existingBooking!.reservationsLeft--;
@@ -117,6 +118,32 @@ namespace LaundryBooking.Controllers
 
             await _bookingService.UpdateBooking(existingBooking);
             return CreatedAtAction(nameof(EditBookingById), new { existingBooking.id });
+        }
+
+        [HttpPost("cancel")]
+        public async Task<IActionResult> CancelBookings()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            User? user = await _laundryService.FindUserById<User>(userId!);
+
+            if (user == null)
+            {
+                throw new CustomException("user is not found", null, 404);
+            }
+
+            var _bookingService = new BookingService(_mongoSettings, user.dbName);
+
+            var existingBooking = await _bookingService.FindBookingsBuUserId(userId!);
+            if (existingBooking == null)
+            {
+                return NotFound("Bookings is not found");
+            }
+            existingBooking.slots = new List<BookingSlot>();
+            existingBooking.reservationsLeft = 3;
+
+            await _bookingService.UpdateBooking(existingBooking);
+            return CreatedAtAction(nameof(CancelBookings), new { existingBooking.id });
         }
     }
 }
