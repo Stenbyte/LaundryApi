@@ -10,6 +10,7 @@ namespace LaundryApi.Models
         public string? id { get; set; }
 
         [BsonElement("userId")]
+        [BsonRepresentation(BsonType.ObjectId)]
         public required string userId { get; set; } = string.Empty;
         [BsonElement("machineId")]
         public string? machineId { get; set; }
