@@ -9,9 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").ToString();
+
 builder.Services.AddCors(options => {
     options.AddPolicy(name: "customPolicy", policy => {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins(allowedOrigins!)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
