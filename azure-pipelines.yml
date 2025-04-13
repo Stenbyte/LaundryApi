@@ -26,5 +26,5 @@ steps:
   inputs:
     azureSubscription: 'Azure subscription 1'
     appType: 'webApp'
-    appName: 'laundrybe'
+    appName: 'laundryBe'
     package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
