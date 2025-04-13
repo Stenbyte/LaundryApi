@@ -9,7 +9,13 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").ToString();
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
+var allowedOrigins = builder.Configuration.GetValue<string>("AllowedOrigins");
 
 builder.Services.AddCors(options => {
     options.AddPolicy(name: "customPolicy", policy => {
@@ -68,8 +74,10 @@ catch (Exception ex)
     throw new Exception($"------------🍎 MongoDB Connection failed: ${ex}------------");
 }
 
-// Todo enable it for production
-// app.UseHttpsRedirection();
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 app.UseCors("customPolicy");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();

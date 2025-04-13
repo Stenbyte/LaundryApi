@@ -30,6 +30,34 @@
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
-        }
+        },
+        {
+            "name": ".NET Launch (Development)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/LaundryApi/bin/Debug/net9.0/LaundryApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/LaundryApi",
+            "stopAtEntry": false,
+            "env": {
+              "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "console": "internalConsole"
+          },
+          {
+            "name": ".NET Launch (Production)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/LaundryApi/bin/Debug/net9.0/LaundryApi.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/LaundryApi",
+            "stopAtEntry": false,
+            "env": {
+              "ASPNETCORE_ENVIRONMENT": "Production"
+            },
+            "console": "internalConsole"
+          }
     ]
 }
