@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.Template.json", optional: true)
     .AddEnvironmentVariables();
 
 var allowedOrigins = builder.Configuration.GetValue<string>("AllowedOrigins");
