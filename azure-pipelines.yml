@@ -29,5 +29,4 @@ steps:
     appName: 'laundrybe'
     package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
     appSettings: |
-      - name: ASPNETCORE_ENVIRONMENT
-        value: Production
+      -name ASPNETCORE_ENVIRONMENT -value Production
