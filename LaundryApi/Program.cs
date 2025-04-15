@@ -27,6 +27,13 @@ builder.Services.AddCors(options => {
 }
 );
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
+builder.WebHost.ConfigureKestrel(options => {
+    options.ListenAnyIP(int.Parse(port));
+});
+
+
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
 
