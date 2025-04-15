@@ -2,5 +2,4 @@ obj/
 bin/
 *.dll
 .editorconfig
-appsettings.json
 appsettings.Development.json
