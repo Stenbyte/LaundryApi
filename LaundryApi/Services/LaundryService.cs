@@ -15,6 +15,7 @@ namespace LaundryApi.Services
 
         public LaundryService(IOptions<MongoDBSettings> mongoSettings)
         {
+            Console.WriteLine("++++++++++++++++++🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎", mongoSettings.Value.ConnectionString);
             _mongoClient = new MongoClient(mongoSettings.Value.ConnectionString);
             _mongoSettings = mongoSettings;
             _database = _mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
