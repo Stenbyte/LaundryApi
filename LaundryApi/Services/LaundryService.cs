@@ -4,6 +4,7 @@ using LaundryApi.Models;
 using MongoDB.Bson;
 using LaundryApi.Controllers;
 using LaundryApi.Exceptions;
+using System.Data.Common;
 
 namespace LaundryApi.Services
 {
@@ -22,6 +23,7 @@ namespace LaundryApi.Services
             _mongoSettings = mongoSettings;
             // _database = _mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
             _database = _mongoClient.GetDatabase(dbName);
+            throw new CustomException("🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉", new { mongourl = mongoUrl, Name = dbName, conStr = mongoSettings.Value.ConnectionString }, 500);
         }
 
         public IMongoDatabase GetUserDatabase(string dbName)
