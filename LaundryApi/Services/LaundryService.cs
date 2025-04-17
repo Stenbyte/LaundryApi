@@ -15,10 +15,13 @@ namespace LaundryApi.Services
 
         public LaundryService(IOptions<MongoDBSettings> mongoSettings)
         {
-            Console.WriteLine("++++++++++++++++++🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎", mongoSettings.Value.ConnectionString);
-            _mongoClient = new MongoClient(mongoSettings.Value.ConnectionString);
+            var mongoUrl = Environment.GetEnvironmentVariable("MongoDB__ConnectionString");
+            var dbName = Environment.GetEnvironmentVariable("MongoDB__DatabaseName");
+            // _mongoClient = new MongoClient(mongoSettings.Value.ConnectionString);
+            _mongoClient = new MongoClient(mongoUrl);
             _mongoSettings = mongoSettings;
-            _database = _mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
+            // _database = _mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
+            _database = _mongoClient.GetDatabase(dbName);
         }
 
         public IMongoDatabase GetUserDatabase(string dbName)
