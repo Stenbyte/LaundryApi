@@ -16,13 +16,9 @@ namespace LaundryApi.Services
 
         public LaundryService(IOptions<MongoDBSettings> mongoSettings)
         {
-            var mongoUrl = Environment.GetEnvironmentVariable("MongoDB__ConnectionString");
-            var dbName = Environment.GetEnvironmentVariable("MongoDB__DatabaseName");
-            // _mongoClient = new MongoClient(mongoSettings.Value.ConnectionString);
-            _mongoClient = new MongoClient(mongoUrl);
             _mongoSettings = mongoSettings;
-            // _database = _mongoClient.GetDatabase(mongoSettings.Value.DatabaseName);
-            _database = _mongoClient.GetDatabase(dbName);
+            _mongoClient = new MongoClient(_mongoSettings.Value.ConnectionString);
+            _database = _mongoClient.GetDatabase(_mongoSettings.Value.DatabaseName);
         }
 
         public IMongoDatabase GetUserDatabase(string dbName)
