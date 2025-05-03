@@ -6,6 +6,7 @@ using LaundryApi.Validators;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +28,7 @@ builder.Services.AddCors(options => {
 }
 );
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 
-builder.WebHost.ConfigureKestrel(options => {
-    options.ListenAnyIP(int.Parse(port));
-});
 
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -65,9 +62,24 @@ builder.Services.AddSingleton<JwtService>();
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters().AddValidatorsFromAssemblyContaining<SignUpValidator>();
 
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(
+builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
 builder.Services.AddAuthorization();
 
+if (builder.Environment.IsProduction())
+{
+    builder.WebHost.ConfigureKestrel(options => {
+        options.ListenAnyIP(int.Parse("8080"));
+    });
+}
+
 var app = builder.Build();
+
+
 
 var scope = app.Services.CreateScope();
 var laundryService = scope.ServiceProvider.GetRequiredService<LaundryService>();
@@ -86,6 +98,7 @@ if (app.Environment.IsProduction())
     app.UseHttpsRedirection();
 }
 app.UseCors("customPolicy");
+app.UseIpRateLimiting();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
