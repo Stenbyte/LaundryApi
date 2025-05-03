@@ -3,3 +3,4 @@ bin/
 *.dll
 .editorconfig
 appsettings.Development.json
+appsettings.json
