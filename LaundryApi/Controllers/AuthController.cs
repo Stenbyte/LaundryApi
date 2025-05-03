@@ -7,6 +7,8 @@ using LaundryApi.Exceptions;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Memory;
+using LaundryApi.Helpers;
 
 namespace LaundryApi.Controllers
 {
@@ -21,10 +23,12 @@ namespace LaundryApi.Controllers
         private readonly LoginValidator _loginValidator;
         private readonly LogOutValidator _logOutValidator;
         private readonly IConfiguration _configuration;
+        private readonly IMemoryCache _cache;
 
 
-        public AuthController(JwtService jwtService, LaundryService laundryService, LoginValidator validator, IConfiguration configuration, LogOutValidator logOutValidator)
+        public AuthController(JwtService jwtService, LaundryService laundryService, LoginValidator validator, IConfiguration configuration, LogOutValidator logOutValidator, IMemoryCache cache)
         {
+            _cache = cache;
             _jwtService = jwtService;
             _layndryService = laundryService;
             _loginValidator = validator;
@@ -35,6 +39,15 @@ namespace LaundryApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            string cachKey = $"lockout_{request.Email}";
+
+            if (_cache.TryGetValue(cachKey, out DateTime lockOutTime))
+            {
+                if (lockOutTime > DateTime.UtcNow)
+                {
+                    throw new CustomException("Email is locked for 10 min", null, 403);
+                }
+            }
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var validationResult = await _loginValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
@@ -44,6 +57,7 @@ namespace LaundryApi.Controllers
             var user = await _layndryService.FindUserByEmail<User>(request.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.password))
             {
+                new HelperFunctions().TrackFailedAttempt(request.Email, _cache);
                 return Unauthorized(new { message = "Invalid credentials" });
             }
             var token = _jwtService.GenerateJwtToken(user);
@@ -53,6 +67,8 @@ namespace LaundryApi.Controllers
             user.refreshTokenExpiry = DateTime.UtcNow
             .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));
             await _layndryService.UpdateUser(user);
+
+            new HelperFunctions().ResetFailedAttempts(request.Email, _cache);
 
             Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions {
                 HttpOnly = true,
