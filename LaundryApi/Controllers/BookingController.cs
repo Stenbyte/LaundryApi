@@ -134,7 +134,7 @@ namespace LaundryBooking.Controllers
 
             var _bookingService = new BookingService(_mongoSettings, user.dbName);
 
-            var existingBooking = await _bookingService.FindBookingsBuUserId(userId!);
+            var existingBooking = await _bookingService.FindBookingsByUserId(userId!);
             if (existingBooking == null)
             {
                 return NotFound("Bookings is not found");
