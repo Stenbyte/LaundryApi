@@ -57,6 +57,7 @@ namespace LaundryBooking.Controllers
             var _bookingService = new BookingService(_mongoSettings, user.dbName);
 
             Booking? existingBooking = await _bookingService.GetBookingsById(userId!);
+            List<Booking> getAllBookings = await _bookingService.GetAll();
             Booking bookingToReturn;
             request.id = ObjectId.GenerateNewId().ToString();
             request.ConvertToUtc();
@@ -67,7 +68,24 @@ namespace LaundryBooking.Controllers
                 {
                     throw new CustomException("You can not add new reservation", null, 403);
                 }
-                // here check if slot is already taken
+
+                BookingSlot? foundExistingSlotMatch;
+
+                foreach (var booking in getAllBookings)
+                {
+                    foundExistingSlotMatch = booking.slots.FirstOrDefault(slot => {
+                        if (slot.day.Date == DateTime.UtcNow.Date)
+                        {
+                            return slot.timeSlots.Any(slot => slot == request.timeSlots[0]);
+                        }
+                        return false;
+                    });
+
+                    if (foundExistingSlotMatch != null)
+                    {
+                        throw new CustomException("Time slot is already taken", request.timeSlots[0], 403);
+                    }
+                }
 
                 existingBooking!.slots.Add(request);
                 existingBooking!.reservationsLeft--;
