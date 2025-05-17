@@ -57,4 +57,50 @@ namespace LaundryApi.Validators
         }
     }
 
+    public class PhoneNumberValidator : AbstractValidator<PhoneNumber>
+    {
+        public PhoneNumberValidator()
+        {
+            RuleFor(x => x.countryCode).NotEmpty()
+            .WithMessage("Country code is required")
+            .Matches(@"^\+\d{1,4}$")
+            .WithMessage("Invalid country code format (e.g., +45)");
+
+            RuleFor(x => x.number).NotEmpty()
+            .WithMessage("Number is required")
+            .Matches(@"^\d{6,15}$")
+            .WithMessage("number must be between 6 - 15 digits");
+        }
+    }
+
+    public class AdressValidator : AbstractValidator<Adress>
+    {
+        public AdressValidator()
+        {
+            RuleFor(x => x.streetName).NotEmpty()
+            .WithMessage("Street name is required")
+            .MaximumLength(100)
+            .WithMessage("Max street name is 100 characters");
+
+            RuleFor(x => x.houseNumber).NotEmpty().Matches(@"^[1-9]\d*$")
+            .WithMessage("House Number is required");
+        }
+    }
+
+    public class TimeSlotValidator
+    {
+        public static bool IsTimeSlotInThePast(List<string> timeSlot)
+        {
+
+            var nowUtc = DateTime.UtcNow;
+            string[] timeParts = timeSlot[0].Split("-");
+            var endTime = timeParts[1];
+            var endHour = int.Parse(endTime.Split(":")[0]);
+            var endMinute = int.Parse(endTime.Split(":")[1]);
+
+            var slotEndUtc = DateTime.UtcNow.AddHours(endHour).AddMinutes(endMinute);
+            return slotEndUtc < nowUtc;
+        }
+    }
+
 }
