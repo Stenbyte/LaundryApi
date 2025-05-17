@@ -38,8 +38,8 @@ namespace LaundryApi.Controllers
             }
 
             await AddDbNameToUser(newUser);
-            var hashPassword = BCrypt.Net.BCrypt.HashPassword(newUser.password);
-            newUser.password = hashPassword;
+            // var hashPassword = BCrypt.Net.BCrypt.HashPassword(newUser.password);
+            // newUser.password = hashPassword;
 
             try
             {

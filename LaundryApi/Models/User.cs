@@ -16,11 +16,11 @@ namespace LaundryApi.Models
         [BsonElement("email")]
         public required string email { get; set; }
 
-        [BsonElement("phoneNumber")]
-        public required PhoneNumber phoneNumber { get; set; }
+        // [BsonElement("phoneNumber")]
+        // public required PhoneNumber phoneNumber { get; set; }
 
-        [BsonElement("password")]
-        public required string password { get; set; }
+        // [BsonElement("password")]
+        // public required string password { get; set; }
 
         [BsonElement("adress")]
         public required Adress adress { get; set; }

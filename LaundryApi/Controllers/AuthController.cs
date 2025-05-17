@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using LaundryApi.Services;
-using Microsoft.AspNetCore.Identity.Data;
 using LaundryApi.Models;
 using LaundryApi.Validators;
 using LaundryApi.Exceptions;
 using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using LaundryApi.Helpers;
@@ -37,9 +35,9 @@ namespace LaundryApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] CustomLoginRequest request)
         {
-            string cachKey = $"lockout_{request.Email}";
+            string cachKey = $"lockout_{request.email}";
 
             if (_cache.TryGetValue(cachKey, out DateTime lockOutTime))
             {
@@ -54,10 +52,11 @@ namespace LaundryApi.Controllers
             {
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
-            var user = await _layndryService.FindUserByEmail<User>(request.Email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.password))
+            var user = await _layndryService.FindUserByEmail<User>(request.email);
+            // if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.password))
+            if (user == null)
             {
-                new HelperFunctions().TrackFailedAttempt(request.Email, _cache);
+                new HelperFunctions().TrackFailedAttempt(request.email, _cache);
                 return Unauthorized(new { message = "Invalid credentials" });
             }
             var token = _jwtService.GenerateJwtToken(user);
@@ -68,7 +67,7 @@ namespace LaundryApi.Controllers
             .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));
             await _layndryService.UpdateUser(user);
 
-            new HelperFunctions().ResetFailedAttempts(request.Email, _cache);
+            new HelperFunctions().ResetFailedAttempts(request.email, _cache);
 
             Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions {
                 HttpOnly = true,
@@ -141,10 +140,5 @@ namespace LaundryApi.Controllers
 
             return Ok(new { accessToken = newAccessToken });
         }
-    }
-
-    public class TokenRequest
-    {
-        public required string refreshToken;
     }
 }
