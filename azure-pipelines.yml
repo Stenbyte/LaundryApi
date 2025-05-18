@@ -16,6 +16,7 @@ steps:
     version: '9.x'
 
 - script: |
+    mkdir -p Build
     echo "{
       \"commit\": \"$(git rev-parse HEAD)\",
       \"commitDate\": \"$(git log -1 --format=%cI)\",
