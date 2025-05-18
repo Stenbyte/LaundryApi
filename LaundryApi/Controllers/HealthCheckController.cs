@@ -24,7 +24,7 @@ namespace LaundryApi.Controllers
 
             if (!System.IO.File.Exists(path))
             {
-                throw new CustomException("Build info file is not found", null, 400);
+                throw new CustomException("Build info file is not found", null, 404);
             }
 
             var json = System.IO.File.ReadAllText(path);
