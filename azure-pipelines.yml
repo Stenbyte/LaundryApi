@@ -16,12 +16,11 @@ steps:
     version: '9.x'
 
 - script: |
-    mkdir -p LaundryApi/Build
     echo "{
       \"commit\": \"$(git rev-parse HEAD)\",
       \"commitDate\": \"$(git log -1 --format=%cI)\",
       \"buildTime\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
-    }" > Build/build-info.json
+    }" > LaundryApi/build-info.json
   displayName: 'Generate build-info.json'    
 
 - task: DotNetCoreCLI@2
