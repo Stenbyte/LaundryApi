@@ -74,11 +74,12 @@ namespace LaundryBooking.Controllers
                 foreach (var booking in getAllBookings)
                 {
                     foundExistingSlotMatch = booking.slots.FirstOrDefault(slot => {
-                        if (slot.day.Date == DateTime.UtcNow.Date)
+                        if (slot.day.Date == request.day.Date)
                         {
                             return slot.timeSlots.Any(slot => slot == request.timeSlots[0]);
                         }
                         return false;
+
                     });
 
                     if (foundExistingSlotMatch != null)
@@ -104,7 +105,9 @@ namespace LaundryBooking.Controllers
             }
 
 
-            return CreatedAtAction(nameof(CreateBooking), new { id = bookingToReturn.id });
+            return CreatedAtAction(nameof(CreateBooking), new {
+                id = bookingToReturn.id
+            });
 
         }
 
