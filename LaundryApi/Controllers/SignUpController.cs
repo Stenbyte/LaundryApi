@@ -61,7 +61,7 @@ namespace LaundryApi.Controllers
             }
             else
             {
-                newUser.dbName = $"Laundry_{newUser.adress.streetName.Replace(" ", "_")}";
+                newUser.dbName = $"Laundry_{newUser.adress.streetName}_{newUser.adress.houseNumber}";
             }
             return newUser;
         }
