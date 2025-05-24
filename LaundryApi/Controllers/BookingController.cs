@@ -120,6 +120,11 @@ namespace LaundryBooking.Controllers
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            if (userId == null)
+            {
+                throw new CustomException("Check your userId", null, 403);
+            }
+
             User? user = await _laundryService.FindUserById<User>(userId!);
 
             if (user == null)
@@ -129,7 +134,7 @@ namespace LaundryBooking.Controllers
 
             var _bookingService = new BookingService(_mongoSettings, user.dbName);
 
-            var existingBooking = await _bookingService.FindBySlotId(request.id);
+            var existingBooking = await _bookingService.FindByUserAndSlotId(request.id, userId);
             if (existingBooking == null)
             {
                 return NotFound("Bookings is not found");

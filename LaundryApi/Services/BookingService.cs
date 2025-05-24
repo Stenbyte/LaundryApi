@@ -43,9 +43,9 @@ namespace LaundryBooking.Services
         }
 
 
-        public async Task<Booking> FindBySlotId(string bookingSlotId)
+        public async Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId)
         {
-            return await _bookingsCollection.Find(b => b.slots.Any(slot => slot.id == bookingSlotId)).FirstOrDefaultAsync();
+            return await _bookingsCollection.Find(b => b.userId == userId && b.slots.Any(slot => slot.id == bookingSlotId)).FirstOrDefaultAsync();
         }
         public async Task<Booking> FindBookingsByUserId(string userId)
         {
