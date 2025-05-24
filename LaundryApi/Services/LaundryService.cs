@@ -63,7 +63,7 @@ namespace LaundryApi.Services
         {
             var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
 
-            var existingUserWithDbName = await collection.Find(user => user.adress.streetName == newUser.adress.streetName).FirstOrDefaultAsync();
+            var existingUserWithDbName = await collection.Find(user => user.adress.streetName == newUser.adress.streetName && user.adress.houseNumber == newUser.adress.houseNumber).FirstOrDefaultAsync();
 
             return existingUserWithDbName;
         }
