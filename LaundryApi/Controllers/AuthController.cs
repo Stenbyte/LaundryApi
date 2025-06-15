@@ -12,7 +12,6 @@ namespace LaundryApi.Controllers
 {
 
     [Route("api/[controller]")]
-    [Consumes("application/json")]
     public class AuthController : ControllerBase
     {
         private readonly JwtService _jwtService;
