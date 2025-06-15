@@ -11,7 +11,6 @@ using LaundryApi.Helpers;
 namespace LaundryApi.Controllers
 {
 
-    [ApiController]
     [Route("api/[controller]")]
     [Consumes("application/json")]
     public class AuthController : ControllerBase

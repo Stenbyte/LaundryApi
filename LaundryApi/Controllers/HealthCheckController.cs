@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LaundryApi.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
     public class IsAliveController : ControllerBase
     {

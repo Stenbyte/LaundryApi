@@ -9,7 +9,6 @@ using LaundryApi.Validators;
 
 namespace LaundryApi.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
     public class SignUpController(LaundryService laundryService, IOptions<MongoDBSettings> mongoSettings, SignUpValidator signupValidator) : ControllerBase
     {

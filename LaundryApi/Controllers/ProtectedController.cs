@@ -7,7 +7,6 @@ namespace LaundryApi.Controllers
 
     [Authorize]
     [Route("api/protected")]
-    [ApiController]
     public class ProtectedController : ControllerBase
     {
 

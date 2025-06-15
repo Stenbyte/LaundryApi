@@ -11,7 +11,6 @@ using LaundryApi.Validators;
 
 namespace LaundryBooking.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
     [Authorize]
     public class BookingController(LaundryService laundryService, IOptions<MongoDBSettings> mongoSettings) : ControllerBase

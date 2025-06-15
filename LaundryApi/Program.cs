@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using LaundryApi.Services;
@@ -7,6 +8,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AspNetCoreRateLimit;
+
+[assembly: ApiController]
 
 var builder = WebApplication.CreateBuilder(args);
 
