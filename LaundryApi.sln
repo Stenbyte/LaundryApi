@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaundryApi", "LaundryApi\LaundryApi.csproj", "{8088D648-AF13-41A8-A1A2-9C9DEE8BE230}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LaundryApi", "LaundryApi", "{0EBCC930-FDA0-7447-6C2D-2E9D396859CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaundryApi.Tests", "LaundryApi\LaundryApi.Tests\LaundryApi.Tests.csproj", "{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +31,23 @@ Global
 		{8088D648-AF13-41A8-A1A2-9C9DEE8BE230}.Release|x64.Build.0 = Release|Any CPU
 		{8088D648-AF13-41A8-A1A2-9C9DEE8BE230}.Release|x86.ActiveCfg = Release|Any CPU
 		{8088D648-AF13-41A8-A1A2-9C9DEE8BE230}.Release|x86.Build.0 = Release|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Debug|x64.Build.0 = Debug|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Debug|x86.Build.0 = Debug|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Release|x64.ActiveCfg = Release|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Release|x64.Build.0 = Release|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Release|x86.ActiveCfg = Release|Any CPU
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F} = {0EBCC930-FDA0-7447-6C2D-2E9D396859CF}
 	EndGlobalSection
 EndGlobal

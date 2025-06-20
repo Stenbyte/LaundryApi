@@ -62,7 +62,7 @@ builder.Services.Configure<MongoDBSettings>(
 builder.Services.AddSingleton<LaundryService>();
 builder.Services.AddSingleton<JwtService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters().AddValidatorsFromAssemblyContaining<SignUpValidator>();
 
 builder.Services.AddMemoryCache();

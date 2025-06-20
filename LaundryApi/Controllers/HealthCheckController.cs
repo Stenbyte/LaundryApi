@@ -1,5 +1,6 @@
 using System.Text.Json;
 using LaundryApi.Exceptions;
+using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LaundryApi.Controllers
@@ -28,7 +29,7 @@ namespace LaundryApi.Controllers
 
             var json = System.IO.File.ReadAllText(path);
 
-            var data = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
             return Ok(
                 new {
