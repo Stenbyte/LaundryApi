@@ -2,6 +2,7 @@ using System.Text.Json;
 using LaundryApi.Exceptions;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
+using LaundryApi.Models;
 
 namespace LaundryApi.Controllers
 {
@@ -32,11 +33,11 @@ namespace LaundryApi.Controllers
             var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
             return Ok(
-                new {
-                    status = "Alive",
-                    commit = data?["commit"],
-                    commitDate = data?["commitDate"],
-                    buildTime = data?["buildTime"],
+                new IsAliveResponse {
+                    Status = "Alive",
+                    Commit = data?["commit"] ?? "something went wrong",
+                    CommitDate = data?["commitDate"] ?? "",
+                    BuildTime = data?["buildTime"] ?? "",
                 }
             );
         }

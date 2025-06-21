@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaundryApi", "LaundryApi\La
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LaundryApi", "LaundryApi", "{0EBCC930-FDA0-7447-6C2D-2E9D396859CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaundryApi.Tests", "LaundryApi\LaundryApi.Tests\LaundryApi.Tests.csproj", "{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaundryApi.Tests", "LaundryApi.Tests\LaundryApi.Tests.csproj", "{BE784738-5456-4DFB-9EF9-C4B3C6D1B71F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
