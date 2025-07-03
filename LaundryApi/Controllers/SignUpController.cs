@@ -30,7 +30,7 @@ namespace LaundryApi.Controllers
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
 
-            var userExists = await _laundryService.FindUserByEmail<User>(newUser.email);
+            var userExists = await _laundryService.FindUserByEmail(newUser.email);
             if (userExists != null)
             {
                 throw new CustomException("User already exists", "", 403);

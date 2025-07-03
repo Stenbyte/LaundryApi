@@ -3,95 +3,57 @@ using MongoDB.Driver;
 using LaundryApi.Models;
 using MongoDB.Bson;
 using LaundryApi.Exceptions;
+using LaundryApi.Repository;
 
 
 namespace LaundryApi.Services
 {
     public class LaundryService
     {
-        private readonly IMongoDatabase _database;
-        private readonly IMongoClient _mongoClient;
-        private readonly IOptions<MongoDBSettings> _mongoSettings;
+        private readonly ILaundryRepository _repository;
 
-        public LaundryService(IOptions<MongoDBSettings> mongoSettings)
+        public LaundryService(ILaundryRepository repository)
         {
-            _mongoSettings = mongoSettings;
-            _mongoClient = new MongoClient(_mongoSettings.Value.ConnectionString);
-            _database = _mongoClient.GetDatabase(_mongoSettings.Value.DatabaseName);
-        }
-
-        public IMongoDatabase GetUserDatabase(string dbName)
-        {
-            return _mongoClient.GetDatabase(dbName);
+            _repository = repository;
         }
 
         public string TestConnection()
         {
             try
             {
-                _database.RunCommand<BsonDocument>(new BsonDocument("ping", 1));
-                return _database.DatabaseNamespace.DatabaseName;
+                return _repository.TestConnection();
             }
             catch (CustomException ex)
             {
                 throw new CustomException("DataBase connection failed", ex, 500);
             }
         }
-        public async Task CreateUser<T>(string collectionName, T entity)
+        public async Task CreateUser(string collectionName, User user)
         {
-            var collection = _database.GetCollection<T>(collectionName);
-            await collection.InsertOneAsync(entity);
+            await _repository.CreateUser(user);
         }
 
-        public async Task<T?> FindUserById<T>(string userId) where T : User
+        public async Task<User?> FindUserById(string userId)
         {
-            var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
-
-            var existingUser = await collection.Find(user => user.id == userId).FirstOrDefaultAsync();
-
-            return existingUser;
+            return await _repository.FindUserById(userId);
         }
-        public async Task<T?> FindUserByEmail<T>(string email) where T : User
+        public async Task<User?> FindUserByEmail(string email)
         {
-            var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
-
-            var existingUser = await collection.Find(user => user.email == email).FirstOrDefaultAsync();
-
-            return existingUser;
+            return await _repository.FindUserByEmail(email);
         }
-        public async Task<T?> FindExistingUserWithDbName<T>(T newUser) where T : User
+        public async Task<User?> FindExistingUserWithDbName(User newUser)
         {
-            var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
-
-            var existingUserWithDbName = await collection.Find(user => user.adress.streetName == newUser.adress.streetName && user.adress.houseNumber == newUser.adress.houseNumber).FirstOrDefaultAsync();
-
-            return existingUserWithDbName;
+            return await _repository.FindExistingUserWithDbName(newUser);
         }
 
-        public async Task<T?> FindUserByRefreshToken<T>(string refreshToken) where T : User
+        public async Task<User?> FindUserByRefreshToken(string refreshToken)
         {
-            var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
-            var existingUser = await collection.Find(user => user.refreshToken == refreshToken).FirstOrDefaultAsync();
-
-            return existingUser;
+            return await _repository.FindUserByRefreshToken(refreshToken);
         }
 
-        public async Task UpdateUser<T>(T userToUpdate) where T : User
+        public async Task UpdateUser(User userToUpdate)
         {
-            var collection = _database.GetCollection<T>(_mongoSettings.Value.UsersCollectionName);
-
-            var filter = Builders<T>.Filter.Eq(user => user.id, userToUpdate.id);
-            var update = Builders<T>.Update
-                .Set(u => u.refreshToken, userToUpdate.refreshToken)
-                .Set(u => u.refreshTokenExpiry, userToUpdate.refreshTokenExpiry);
-
-            var updateResult = await collection.UpdateOneAsync(filter, update);
-
-            if (updateResult.ModifiedCount == 0)
-            {
-                throw new CustomException("User not found or no changes made", null, 400);
-            }
-
+            await _repository.UpdateUser(userToUpdate);
         }
     }
 }

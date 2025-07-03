@@ -50,7 +50,7 @@ namespace LaundryApi.Controllers
             {
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
-            var user = await _layndryService.FindUserByEmail<User>(request.email);
+            var user = await _layndryService.FindUserByEmail(request.email);
             // if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.password))
             if (user == null)
             {
@@ -87,7 +87,7 @@ namespace LaundryApi.Controllers
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
 
-            var existingUser = await _layndryService.FindUserByEmail<User>(request.email);
+            var existingUser = await _layndryService.FindUserByEmail(request.email);
             if (existingUser == null) return Unauthorized();
 
             existingUser.refreshToken = null;
@@ -113,7 +113,7 @@ namespace LaundryApi.Controllers
         public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            User? user = await _layndryService.FindUserByRefreshToken<User>(request.refreshToken);
+            User? user = await _layndryService.FindUserByRefreshToken(request.refreshToken);
 
             if (user == null || user.refreshTokenExpiry < DateTime.UtcNow)
             {

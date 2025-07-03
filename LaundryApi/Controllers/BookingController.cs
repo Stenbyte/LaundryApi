@@ -24,7 +24,7 @@ namespace LaundryBooking.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            User? user = await _laundryService.FindUserById<User>(userId!);
+            User? user = await _laundryService.FindUserById(userId!);
             if (user == null)
             {
                 throw new CustomException("user is not found", null, 404);
@@ -47,7 +47,7 @@ namespace LaundryBooking.Controllers
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            User? user = await _laundryService.FindUserById<User>(userId!);
+            User? user = await _laundryService.FindUserById(userId!);
             if (user == null)
             {
                 throw new CustomException("user is not found", null, 404);
@@ -124,7 +124,7 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("Check your userId", null, 403);
             }
 
-            User? user = await _laundryService.FindUserById<User>(userId!);
+            User? user = await _laundryService.FindUserById(userId!);
 
             if (user == null)
             {
@@ -150,7 +150,7 @@ namespace LaundryBooking.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            User? user = await _laundryService.FindUserById<User>(userId!);
+            User? user = await _laundryService.FindUserById(userId!);
 
             if (user == null)
             {

@@ -8,6 +8,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AspNetCoreRateLimit;
+using LaundryApi.Repository;
 
 [assembly: ApiController]
 
@@ -60,6 +61,8 @@ builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
 builder.Services.AddSingleton<LaundryService>();
+builder.Services.AddScoped<ILaundryRepository, LaundryRepository>();
+
 builder.Services.AddSingleton<JwtService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson();

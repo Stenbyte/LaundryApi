@@ -69,7 +69,7 @@ public class LaundryRepository : ILaundryRepository
 
     public async Task UpdateUser(User userToUpdate)
     {
-
+        // revisit if i need return a result ?
         var filter = Builders<User>.Filter.Eq(user => user.id, userToUpdate.id);
         var update = Builders<User>.Update
             .Set(u => u.refreshToken, userToUpdate.refreshToken)
@@ -81,6 +81,7 @@ public class LaundryRepository : ILaundryRepository
         {
             throw new CustomException("User not found or no changes made", null, 400);
         }
+        // return updateResult;
 
     }
 }
