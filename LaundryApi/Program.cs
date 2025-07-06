@@ -62,6 +62,7 @@ builder.Services.Configure<MongoDBSettings>(
 
 builder.Services.AddSingleton<LaundryService>();
 builder.Services.AddScoped<ILaundryRepository, LaundryRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 builder.Services.AddSingleton<JwtService>();
 
