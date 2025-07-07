@@ -1,4 +1,5 @@
 using LaundryApi.Models;
+using LaundryApi.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -8,48 +9,39 @@ namespace LaundryBooking.Services
     public class BookingService
     {
         private readonly IMongoCollection<Booking> _bookingsCollection;
+        private readonly IBookingRepository _bookingRepository;
 
         public BookingService(IOptions<MongoDBSettings> mongoDbSettings, String dbName)
         {
-            var mongoClient = new MongoClient(mongoDbSettings.Value.ConnectionString);
-            var db = mongoClient.GetDatabase(dbName);
-            _bookingsCollection = db.GetCollection<Booking>("Booking");
+            _bookingRepository = new BookingRepository(mongoDbSettings, dbName);
         }
         public async Task<List<Booking>> GetAll()
         {
-            return await _bookingsCollection.Find(_ => true).ToListAsync();
+            return await _bookingRepository.GetAll();
         }
 
         public async Task<Booking> CreateBooking(Booking newBooking)
         {
-
-            await _bookingsCollection.InsertOneAsync(newBooking);
-
-            return newBooking;
+            return await _bookingRepository.CreateBooking(newBooking);
         }
         public async Task<Booking> UpdateBooking(Booking existingBooking)
         {
-
-            var filter = Builders<Booking>.Filter.Eq(booking => booking.id, existingBooking.id);
-            var update = Builders<Booking>.Update.Set(booking => booking.slots, existingBooking.slots).Set(booking => booking.reservationsLeft, existingBooking.reservationsLeft);
-            await _bookingsCollection.UpdateOneAsync(filter, update);
-
-            return existingBooking;
+            return await _bookingRepository.UpdateBooking(existingBooking);
         }
 
         public async Task<Booking> GetBookingsById(string userId)
         {
-            return await _bookingsCollection.Find(booking => booking.userId == userId).FirstOrDefaultAsync();
+            return await _bookingRepository.GetBookingsById(userId);
         }
 
 
         public async Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId)
         {
-            return await _bookingsCollection.Find(b => b.userId == userId && b.slots.Any(slot => slot.id == bookingSlotId)).FirstOrDefaultAsync();
+            return await _bookingRepository.FindByUserAndSlotId(bookingSlotId, userId);
         }
         public async Task<Booking> FindBookingsByUserId(string userId)
         {
-            return await _bookingsCollection.Find(b => b.userId == userId).FirstOrDefaultAsync();
+            return await _bookingRepository.FindBookingsByUserId(userId);
         }
 
 

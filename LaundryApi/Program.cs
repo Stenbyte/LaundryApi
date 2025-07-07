@@ -60,7 +60,7 @@ builder.Services.AddAuthentication(options => {
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
-builder.Services.AddSingleton<LaundryService>();
+builder.Services.AddScoped<LaundryService>();
 builder.Services.AddScoped<ILaundryRepository, LaundryRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
