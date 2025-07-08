@@ -13,10 +13,12 @@ namespace LaundryBooking.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class BookingController(LaundryService laundryService, IOptions<MongoDBSettings> mongoSettings) : ControllerBase
+    public class BookingController(LaundryService laundryService, IBookingService bookingService) : ControllerBase
     {
+        // add interface for laundry service
         private readonly LaundryService _laundryService = laundryService;
-        private readonly IOptions<MongoDBSettings> _mongoSettings = mongoSettings;
+        private readonly IBookingService _bookingService = bookingService;
+
 
 
         [HttpGet("getAll")]
@@ -30,8 +32,7 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-            var _bookingService = new BookingService(_mongoSettings, user.dbName);
-            List<Booking> bookings = await _bookingService.GetAll();
+            List<Booking> bookings = await _bookingService.GetAll(user.dbName);
             return bookings;
         }
 
@@ -53,10 +54,10 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-            var _bookingService = new BookingService(_mongoSettings, user.dbName);
 
-            Booking? existingBooking = await _bookingService.GetBookingsById(userId!);
-            List<Booking> getAllBookings = await _bookingService.GetAll();
+
+            Booking? existingBooking = await _bookingService.GetBookingsById(userId!, user.dbName);
+            List<Booking> getAllBookings = await _bookingService.GetAll(user.dbName);
             Booking bookingToReturn;
             request.id = ObjectId.GenerateNewId().ToString();
             request.ConvertToUtc();
@@ -90,7 +91,7 @@ namespace LaundryBooking.Controllers
                 existingBooking!.slots.Add(request);
                 existingBooking!.reservationsLeft--;
                 bookingToReturn = existingBooking;
-                await _bookingService.UpdateBooking(bookingToReturn);
+                await _bookingService.UpdateBooking(bookingToReturn, user.dbName);
             }
             else
             {
@@ -100,7 +101,7 @@ namespace LaundryBooking.Controllers
                     reservationsLeft = 2
                 };
                 bookingToReturn = newBooking;
-                await _bookingService.CreateBooking(bookingToReturn);
+                await _bookingService.CreateBooking(bookingToReturn, user.dbName);
             }
 
 
@@ -131,9 +132,8 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-            var _bookingService = new BookingService(_mongoSettings, user.dbName);
 
-            var existingBooking = await _bookingService.FindByUserAndSlotId(request.id, userId);
+            var existingBooking = await _bookingService.FindByUserAndSlotId(request.id, userId, user.dbName);
             if (existingBooking == null)
             {
                 return NotFound("Bookings is not found");
@@ -141,7 +141,7 @@ namespace LaundryBooking.Controllers
             existingBooking.slots = existingBooking.slots.Where(slot => slot.id != request.id).ToList();
             existingBooking.reservationsLeft++;
 
-            await _bookingService.UpdateBooking(existingBooking);
+            await _bookingService.UpdateBooking(existingBooking, user.dbName);
             return CreatedAtAction(nameof(EditBookingById), new { existingBooking.id });
         }
 
@@ -157,9 +157,8 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-            var _bookingService = new BookingService(_mongoSettings, user.dbName);
 
-            var existingBooking = await _bookingService.FindBookingsByUserId(userId!);
+            var existingBooking = await _bookingService.FindBookingsByUserId(userId!, user.dbName);
             if (existingBooking == null)
             {
                 return NotFound("Bookings is not found");
@@ -167,7 +166,7 @@ namespace LaundryBooking.Controllers
             existingBooking.slots = new List<BookingSlot>();
             existingBooking.reservationsLeft = 3;
 
-            await _bookingService.UpdateBooking(existingBooking);
+            await _bookingService.UpdateBooking(existingBooking, user.dbName);
             return CreatedAtAction(nameof(CancelBookings), new { existingBooking.id });
         }
     }

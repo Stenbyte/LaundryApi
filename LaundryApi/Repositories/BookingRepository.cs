@@ -11,12 +11,12 @@ class BookingRepository : IBookingRepository
 {
 
     private readonly MongoClient _mongoclient;
-    private readonly IOptions<MongoDBSettings> _mongoSettings;
     private readonly IMongoDatabase _db;
     private readonly IMongoCollection<Booking> _bookingCollection;
 
     public BookingRepository(IOptions<MongoDBSettings> mongoDbSettings, string dbName)
     {
+        // inject client to DI and ask about pooling what tf is it
         _mongoclient = new MongoClient(mongoDbSettings.Value.ConnectionString);
         _db = _mongoclient.GetDatabase(dbName);
         _bookingCollection = _db.GetCollection<Booking>("Booking");

@@ -1,47 +1,53 @@
 using LaundryApi.Models;
 using LaundryApi.Repository;
+using LaundryApi.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace LaundryBooking.Services
 {
-    public class BookingService
+    public class BookingService : IBookingService
     {
-        private readonly IMongoCollection<Booking> _bookingsCollection;
-        private readonly IBookingRepository _bookingRepository;
+        private readonly IOptions<MongoDBSettings> _mongoSettings;
 
-        public BookingService(IOptions<MongoDBSettings> mongoDbSettings, String dbName)
+        public BookingService(IOptions<MongoDBSettings> mongoDbSettings)
         {
-            _bookingRepository = new BookingRepository(mongoDbSettings, dbName);
+            _mongoSettings = mongoDbSettings;
         }
-        public async Task<List<Booking>> GetAll()
+        public async Task<List<Booking>> GetAll(string dbName)
         {
-            return await _bookingRepository.GetAll();
-        }
-
-        public async Task<Booking> CreateBooking(Booking newBooking)
-        {
-            return await _bookingRepository.CreateBooking(newBooking);
-        }
-        public async Task<Booking> UpdateBooking(Booking existingBooking)
-        {
-            return await _bookingRepository.UpdateBooking(existingBooking);
+            var repo = new BookingRepository(_mongoSettings, dbName);
+            return await repo.GetAll();
         }
 
-        public async Task<Booking> GetBookingsById(string userId)
+        public async Task<Booking> CreateBooking(Booking newBooking, string dbName)
         {
-            return await _bookingRepository.GetBookingsById(userId);
+            var repo = new BookingRepository(_mongoSettings, dbName);
+            return await repo.CreateBooking(newBooking);
+        }
+        public async Task<Booking> UpdateBooking(Booking existingBooking, string dbName)
+        {
+            var repo = new BookingRepository(_mongoSettings, dbName);
+            return await repo.UpdateBooking(existingBooking);
+        }
+
+        public async Task<Booking> GetBookingsById(string userId, string dbName)
+        {
+            var repo = new BookingRepository(_mongoSettings, dbName);
+            return await repo.GetBookingsById(userId);
         }
 
 
-        public async Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId)
+        public async Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId, string dbName)
         {
-            return await _bookingRepository.FindByUserAndSlotId(bookingSlotId, userId);
+            var repo = new BookingRepository(_mongoSettings, dbName);
+            return await repo.FindByUserAndSlotId(bookingSlotId, userId);
         }
-        public async Task<Booking> FindBookingsByUserId(string userId)
+        public async Task<Booking> FindBookingsByUserId(string userId, string dbName)
         {
-            return await _bookingRepository.FindBookingsByUserId(userId);
+            var repo = new BookingRepository(_mongoSettings, dbName);
+            return await repo.FindBookingsByUserId(userId);
         }
 
 
