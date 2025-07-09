@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using AspNetCoreRateLimit;
 using LaundryApi.Repository;
 using LaundryBooking.Services;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 [assembly: ApiController]
 
@@ -61,8 +63,13 @@ builder.Services.AddAuthentication(options => {
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
+builder.Services.AddSingleton(sp => {
+    var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
+    return new MongoClient(settings.ConnectionString);
+});
 builder.Services.AddScoped<LaundryService>();
 builder.Services.AddScoped<ILaundryRepository, LaundryRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddSingleton<JwtService>();

@@ -10,16 +10,12 @@ namespace LaundryApi.Repository;
 public class LaundryRepository : ILaundryRepository
 {
     private readonly IMongoDatabase _laundryDb;
-    private readonly IOptions<MongoDBSettings> _mongoSettings;
-    private readonly IMongoClient _mongoClient;
     private readonly IMongoCollection<User> _userCollection;
 
-    public LaundryRepository(IOptions<MongoDBSettings> mongoSettings)
+    public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings)
     {
-        _mongoSettings = mongoSettings;
-        _mongoClient = new MongoClient(_mongoSettings.Value.ConnectionString);
-        _laundryDb = _mongoClient.GetDatabase(_mongoSettings.Value.DatabaseName);
-        _userCollection = _laundryDb.GetCollection<User>(_mongoSettings.Value.UsersCollectionName);
+        _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
+        _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
     }
 
     public string TestConnection()

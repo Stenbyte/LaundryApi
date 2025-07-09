@@ -9,45 +9,39 @@ namespace LaundryBooking.Services
 {
     public class BookingService : IBookingService
     {
-        private readonly IOptions<MongoDBSettings> _mongoSettings;
+        private readonly IBookingRepository _bookingRepository;
 
-        public BookingService(IOptions<MongoDBSettings> mongoDbSettings)
+        public BookingService(IBookingRepository bookingRepository)
         {
-            _mongoSettings = mongoDbSettings;
+            _bookingRepository = bookingRepository;
         }
         public async Task<List<Booking>> GetAll(string dbName)
         {
-            var repo = new BookingRepository(_mongoSettings, dbName);
-            return await repo.GetAll();
+            return await _bookingRepository.GetAll(dbName);
         }
 
         public async Task<Booking> CreateBooking(Booking newBooking, string dbName)
         {
-            var repo = new BookingRepository(_mongoSettings, dbName);
-            return await repo.CreateBooking(newBooking);
+            return await _bookingRepository.CreateBooking(newBooking, dbName);
         }
         public async Task<Booking> UpdateBooking(Booking existingBooking, string dbName)
         {
-            var repo = new BookingRepository(_mongoSettings, dbName);
-            return await repo.UpdateBooking(existingBooking);
+            return await _bookingRepository.UpdateBooking(existingBooking, dbName);
         }
 
         public async Task<Booking> GetBookingsById(string userId, string dbName)
         {
-            var repo = new BookingRepository(_mongoSettings, dbName);
-            return await repo.GetBookingsById(userId);
+            return await _bookingRepository.GetBookingsById(userId, dbName);
         }
 
 
         public async Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId, string dbName)
         {
-            var repo = new BookingRepository(_mongoSettings, dbName);
-            return await repo.FindByUserAndSlotId(bookingSlotId, userId);
+            return await _bookingRepository.FindByUserAndSlotId(bookingSlotId, userId, dbName);
         }
         public async Task<Booking> FindBookingsByUserId(string userId, string dbName)
         {
-            var repo = new BookingRepository(_mongoSettings, dbName);
-            return await repo.FindBookingsByUserId(userId);
+            return await _bookingRepository.FindBookingsByUserId(userId, dbName);
         }
 
 

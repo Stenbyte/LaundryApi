@@ -1,17 +1,19 @@
 
 
 using LaundryApi.Models;
+using MongoDB.Driver;
 
 namespace LaundryApi.Repository;
 
 public interface IBookingRepository
 {
-    Task<List<Booking>> GetAll();
-    Task<Booking> CreateBooking(Booking newBooking);
+    IMongoCollection<Booking> GetCollection(string dbName);
+    Task<List<Booking>> GetAll(string dbName);
+    Task<Booking> CreateBooking(Booking newBooking, string dbName);
 
-    Task<Booking> UpdateBooking(Booking existingBooking);
-    Task<Booking> GetBookingsById(string userId);
+    Task<Booking> UpdateBooking(Booking existingBooking, string dbName);
+    Task<Booking> GetBookingsById(string userId, string dbName);
 
-    Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId);
-    Task<Booking> FindBookingsByUserId(string userId);
+    Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId, string dbName);
+    Task<Booking> FindBookingsByUserId(string userId, string dbName);
 }
