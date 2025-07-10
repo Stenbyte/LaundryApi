@@ -60,7 +60,7 @@ namespace LaundryApi.Controllers
             }
             else
             {
-                newUser.dbName = $"Laundry_{newUser.adress.streetName}_{newUser.adress.houseNumber}";
+                newUser.dbName = $"Laundry_{newUser.adress.streetName}";
             }
             return newUser;
         }
