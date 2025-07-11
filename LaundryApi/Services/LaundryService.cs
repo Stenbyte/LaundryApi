@@ -8,7 +8,7 @@ using LaundryApi.Repository;
 
 namespace LaundryApi.Services
 {
-    public class LaundryService
+    public class LaundryService : ILaundryService
     {
         private readonly ILaundryRepository _repository;
 
