@@ -97,7 +97,7 @@ var app = builder.Build();
 
 
 var scope = app.Services.CreateScope();
-var laundryService = scope.ServiceProvider.GetRequiredService<LaundryService>();
+var laundryService = scope.ServiceProvider.GetRequiredService<ILaundryService>();
 try
 {
     var dataBase = laundryService.TestConnection();

@@ -97,7 +97,8 @@ namespace LaundryBooking.Controllers
                 var newBooking = new Booking {
                     userId = userId!,
                     slots = new List<BookingSlot> { request },
-                    reservationsLeft = 2
+                    reservationsLeft = 2,
+                    buildingId = user.adress.id
                 };
                 bookingToReturn = newBooking;
                 await _bookingService.CreateBooking(bookingToReturn, user.dbName);

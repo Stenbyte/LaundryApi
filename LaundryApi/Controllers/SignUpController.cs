@@ -10,9 +10,9 @@ using LaundryApi.Validators;
 namespace LaundryApi.Controllers
 {
     [Route("api/[controller]")]
-    public class SignUpController(LaundryService laundryService, IOptions<MongoDBSettings> mongoSettings, SignUpValidator signupValidator) : ControllerBase
+    public class SignUpController(ILaundryService laundryService, IOptions<MongoDBSettings> mongoSettings, SignUpValidator signupValidator) : ControllerBase
     {
-        private readonly LaundryService _laundryService = laundryService;
+        private readonly ILaundryService _laundryService = laundryService;
         private readonly IOptions<MongoDBSettings> _mongoSettings = mongoSettings;
         private readonly SignUpValidator _validator = signupValidator;
 
@@ -53,14 +53,16 @@ namespace LaundryApi.Controllers
 
         private async Task<User> AddDbNameToUser(User newUser)
         {
-            var existingUser = await _laundryService.FindExistingUserWithDbName(newUser);
-            if (existingUser != null)
+            var existingUserWithSameDb = await _laundryService.FindExistingUserWithDbName(newUser);
+            if (existingUserWithSameDb != null)
             {
-                newUser.dbName = existingUser.dbName;
+                newUser.dbName = existingUserWithSameDb.dbName;
+                newUser.adress.id = existingUserWithSameDb.adress.id;
             }
             else
             {
                 newUser.dbName = $"Laundry_{newUser.adress.streetName}";
+                newUser.adress.id = ObjectId.GenerateNewId().ToString();
             }
             return newUser;
         }

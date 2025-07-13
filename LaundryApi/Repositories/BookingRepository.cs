@@ -23,7 +23,7 @@ class BookingRepository : IBookingRepository
 
     public async Task<List<Booking>> GetAll(User user)
     {
-        return await GetCollection(user.dbName).Find(bookings => user.adress.buildingId == bookings.buildingId).ToListAsync();
+        return await GetCollection(user.dbName).Find(bookings => user.adress.id == bookings.buildingId).ToListAsync();
     }
 
     public async Task<Booking> CreateBooking(Booking newBooking, string dbName)

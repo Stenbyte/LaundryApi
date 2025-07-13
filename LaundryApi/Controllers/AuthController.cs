@@ -15,14 +15,14 @@ namespace LaundryApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly LaundryService _layndryService;
+        private readonly ILaundryService _layndryService;
         private readonly LoginValidator _loginValidator;
         private readonly LogOutValidator _logOutValidator;
         private readonly IConfiguration _configuration;
         private readonly IMemoryCache _cache;
 
 
-        public AuthController(JwtService jwtService, LaundryService laundryService, LoginValidator validator, IConfiguration configuration, LogOutValidator logOutValidator, IMemoryCache cache)
+        public AuthController(JwtService jwtService, ILaundryService laundryService, LoginValidator validator, IConfiguration configuration, LogOutValidator logOutValidator, IMemoryCache cache)
         {
             _cache = cache;
             _jwtService = jwtService;

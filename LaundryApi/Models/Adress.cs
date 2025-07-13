@@ -7,14 +7,11 @@ namespace LaundryApi.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? streetNameId { get; set; }
+        public string? id { get; set; }
         [BsonElement("streetName")]
         public required string streetName { get; set; }
 
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string? buildingId { get; set; }
-        [BsonElement("housebuildingNumberNumber")]
+        [BsonElement("buildingNumber")]
         public required string buildingNumber { get; set; }
 
     }
