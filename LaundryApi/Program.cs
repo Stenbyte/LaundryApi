@@ -67,7 +67,7 @@ builder.Services.AddSingleton(sp => {
     var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
     return new MongoClient(settings.ConnectionString);
 });
-builder.Services.AddScoped<LaundryService>();
+builder.Services.AddScoped<ILaundryService, LaundryService>();
 builder.Services.AddScoped<ILaundryRepository, LaundryRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
