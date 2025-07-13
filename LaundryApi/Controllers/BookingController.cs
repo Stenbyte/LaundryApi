@@ -13,10 +13,9 @@ namespace LaundryBooking.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class BookingController(LaundryService laundryService, IBookingService bookingService) : ControllerBase
+    public class BookingController(ILaundryService laundryService, IBookingService bookingService) : ControllerBase
     {
-        // add interface for laundry service
-        private readonly LaundryService _laundryService = laundryService;
+        private readonly ILaundryService _laundryService = laundryService;
         private readonly IBookingService _bookingService = bookingService;
 
 
