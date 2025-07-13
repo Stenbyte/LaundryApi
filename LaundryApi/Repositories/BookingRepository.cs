@@ -13,7 +13,6 @@ class BookingRepository : IBookingRepository
 
     public BookingRepository(MongoClient client)
     {
-        // inject client to DI and ask about pooling what tf is it
         _client = client;
     }
 
@@ -22,9 +21,9 @@ class BookingRepository : IBookingRepository
         return _client.GetDatabase(dbName).GetCollection<Booking>("Booking");
     }
 
-    public async Task<List<Booking>> GetAll(string dbName)
+    public async Task<List<Booking>> GetAll(User user)
     {
-        return await GetCollection(dbName).Find(_ => true).ToListAsync();
+        return await GetCollection(user.dbName).Find(bookings => user.adress.buildingId == bookings.buildingId).ToListAsync();
     }
 
     public async Task<Booking> CreateBooking(Booking newBooking, string dbName)

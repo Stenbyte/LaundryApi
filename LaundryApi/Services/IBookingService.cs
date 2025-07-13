@@ -5,7 +5,7 @@ namespace LaundryApi.Services;
 
 public interface IBookingService
 {
-    Task<List<Booking>> GetAll(string dbName);
+    Task<List<Booking>> GetAll(User user);
 
     Task<Booking> CreateBooking(Booking newBooking, string dbName);
 

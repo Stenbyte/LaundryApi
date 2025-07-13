@@ -15,9 +15,9 @@ namespace LaundryBooking.Services
         {
             _bookingRepository = bookingRepository;
         }
-        public async Task<List<Booking>> GetAll(string dbName)
+        public async Task<List<Booking>> GetAll(User user)
         {
-            return await _bookingRepository.GetAll(dbName);
+            return await _bookingRepository.GetAll(user);
         }
 
         public async Task<Booking> CreateBooking(Booking newBooking, string dbName)

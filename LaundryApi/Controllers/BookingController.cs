@@ -32,7 +32,7 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-            List<Booking> bookings = await _bookingService.GetAll(user.dbName);
+            List<Booking> bookings = await _bookingService.GetAll(user);
             return bookings;
         }
 
@@ -57,7 +57,7 @@ namespace LaundryBooking.Controllers
 
 
             Booking? existingBooking = await _bookingService.GetBookingsById(userId!, user.dbName);
-            List<Booking> getAllBookings = await _bookingService.GetAll(user.dbName);
+            List<Booking> getAllBookings = await _bookingService.GetAll(user);
             Booking bookingToReturn;
             request.id = ObjectId.GenerateNewId().ToString();
             request.ConvertToUtc();

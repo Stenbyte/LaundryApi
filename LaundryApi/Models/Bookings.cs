@@ -17,6 +17,9 @@ namespace LaundryApi.Models
 
         [BsonElement("slots")]
         public List<BookingSlot> slots { get; set; } = new();
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? buildingId { get; set; }
 
         [BsonElement("reservationsLeft")]
         public int reservationsLeft { get; set; } = 3;

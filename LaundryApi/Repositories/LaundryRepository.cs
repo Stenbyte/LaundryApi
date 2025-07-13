@@ -45,7 +45,7 @@ public class LaundryRepository : ILaundryRepository
 
     public async Task<User?> FindExistingUserWithDbName(User newUser)
     {
-        var existingUserWithDbName = await _userCollection.Find(user => user.adress.streetName == newUser.adress.streetName && user.adress.houseNumber == newUser.adress.houseNumber).FirstOrDefaultAsync();
+        var existingUserWithDbName = await _userCollection.Find(user => user.adress.streetName == newUser.adress.streetName && user.adress.buildingNumber == newUser.adress.buildingNumber).FirstOrDefaultAsync();
 
         return existingUserWithDbName;
     }
