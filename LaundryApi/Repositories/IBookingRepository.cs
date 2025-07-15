@@ -8,7 +8,7 @@ namespace LaundryApi.Repository;
 public interface IBookingRepository
 {
     IMongoCollection<Booking> GetCollection(string dbName);
-    Task<List<Booking>> GetAll(User user);
+    Task<List<Booking>> GetAllBookingsByBuildingId(User user);
     Task<Booking> CreateBooking(Booking newBooking, string dbName);
 
     Task<Booking> UpdateBooking(Booking existingBooking, string dbName);

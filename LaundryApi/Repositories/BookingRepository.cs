@@ -1,8 +1,4 @@
-
-
 using LaundryApi.Models;
-using LaundryApi.Repository;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace LaundryApi.Repository;
@@ -21,7 +17,7 @@ class BookingRepository : IBookingRepository
         return _client.GetDatabase(dbName).GetCollection<Booking>("Booking");
     }
 
-    public async Task<List<Booking>> GetAll(User user)
+    public async Task<List<Booking>> GetAllBookingsByBuildingId(User user)
     {
         return await GetCollection(user.dbName).Find(bookings => user.adress.id == bookings.buildingId).ToListAsync();
     }

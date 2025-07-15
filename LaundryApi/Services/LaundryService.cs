@@ -1,7 +1,4 @@
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
 using LaundryApi.Models;
-using MongoDB.Bson;
 using LaundryApi.Exceptions;
 using LaundryApi.Repository;
 

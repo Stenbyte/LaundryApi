@@ -1,9 +1,6 @@
 using LaundryApi.Models;
 using LaundryApi.Repository;
 using LaundryApi.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
 
 namespace LaundryBooking.Services
 {
@@ -15,9 +12,9 @@ namespace LaundryBooking.Services
         {
             _bookingRepository = bookingRepository;
         }
-        public async Task<List<Booking>> GetAll(User user)
+        public async Task<List<Booking>> GetAllBookingsByBuildingId(User user)
         {
-            return await _bookingRepository.GetAll(user);
+            return await _bookingRepository.GetAllBookingsByBuildingId(user);
         }
 
         public async Task<Booking> CreateBooking(Booking newBooking, string dbName)

@@ -1,9 +1,7 @@
 using LaundryApi.Models;
 using LaundryApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
-using LaundryBooking.Services;
 using System.Security.Claims;
 using LaundryApi.Exceptions;
 using MongoDB.Bson;
@@ -31,7 +29,7 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-            List<Booking> bookings = await _bookingService.GetAll(user);
+            List<Booking> bookings = await _bookingService.GetAllBookingsByBuildingId(user);
             return bookings;
         }
 
@@ -56,7 +54,7 @@ namespace LaundryBooking.Controllers
 
 
             Booking? existingBooking = await _bookingService.GetBookingsById(userId!, user.dbName);
-            List<Booking> getAllBookings = await _bookingService.GetAll(user);
+            List<Booking> getAllBookings = await _bookingService.GetAllBookingsByBuildingId(user);
             Booking bookingToReturn;
             request.id = ObjectId.GenerateNewId().ToString();
             request.ConvertToUtc();
