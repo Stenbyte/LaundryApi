@@ -53,7 +53,7 @@ namespace LaundryBooking.Controllers
 
 
 
-            Booking? existingBooking = await _bookingService.GetBookingsById(userId!, user.dbName);
+            Booking? existingBooking = await _bookingService.GetBookingsByUserId(userId!, user.dbName);
             List<Booking> getAllBookings = await _bookingService.GetAllBookingsByBuildingId(user);
             Booking bookingToReturn;
             request.id = ObjectId.GenerateNewId().ToString();
@@ -84,9 +84,8 @@ namespace LaundryBooking.Controllers
                         throw new CustomException("Time slot is already taken", request.timeSlots[0], 403);
                     }
                 }
-
                 existingBooking!.slots.Add(request);
-                existingBooking!.reservationsLeft--;
+                existingBooking.reservationsLeft--;
                 bookingToReturn = existingBooking;
                 await _bookingService.UpdateBooking(bookingToReturn, user.dbName);
             }
@@ -101,6 +100,70 @@ namespace LaundryBooking.Controllers
                 bookingToReturn = newBooking;
                 await _bookingService.CreateBooking(bookingToReturn, user.dbName);
             }
+
+
+            return CreatedAtAction(nameof(CreateBooking), new {
+                id = bookingToReturn.id
+            });
+
+        }
+        [HttpPost("createnew")]
+
+        public async Task<IActionResult> CreateBookingNew([FromBody] Booking request)
+        {
+            if (!ObjectId.TryParse(request.machineId, out var _))
+            {
+                throw new CustomException("Machine id is not valid", null, 400);
+            }
+            if (TimeSlotValidator.IsTimeSlotInThePast(request.endTime))
+            {
+                throw new CustomException("Cannot create a reservation for a past time", null, 400);
+            }
+            // create date from request and validate created date before fetching anything
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            User? user = await _laundryService.FindUserById(userId!);
+            if (user == null)
+            {
+                throw new CustomException("user is not found", null, 404);
+            }
+
+
+
+            Booking? existingBooking = await _bookingService.GetBookingsByUserId(userId!, user.dbName);
+            List<Booking> getAllBookingsByMachineId = await _bookingService.GetAllBookingsByMachineId(user.dbName, request.machineId!);
+            Booking bookingToReturn;
+            request.id = ObjectId.GenerateNewId().ToString();
+            // request.ConvertToUtc();
+            request.booked = true;
+
+            if (existingBooking != null && existingBooking?.reservationsLeft == 0)
+            {
+                throw new CustomException("You can not add new reservation", null, 403);
+            }
+
+            bool foundExistingSlotMatch = false;
+
+            foreach (var booking in getAllBookingsByMachineId)
+            {
+                foundExistingSlotMatch = booking.startTime == request.startTime;
+
+
+                if (foundExistingSlotMatch)
+                {
+                    throw new CustomException("Time slot is already taken", request.startTime, 403);
+                }
+            }
+
+            var newBooking = new Booking {
+                userId = userId!,
+                startTime = DateTime.SpecifyKind(DateTime.Parse("08:00"), DateTimeKind.Utc),
+                endTime = DateTime.SpecifyKind(DateTime.Parse("11:00"), DateTimeKind.Utc),
+                reservationsLeft = existingBooking!.reservationsLeft,
+                buildingId = user.adress.id
+            };
+            bookingToReturn = newBooking;
+            await _bookingService.CreateBooking(bookingToReturn, user.dbName);
 
 
             return CreatedAtAction(nameof(CreateBooking), new {

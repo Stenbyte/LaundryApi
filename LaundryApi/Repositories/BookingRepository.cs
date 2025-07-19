@@ -21,6 +21,10 @@ class BookingRepository : IBookingRepository
     {
         return await GetCollection(user.dbName).Find(bookings => user.adress.id == bookings.buildingId).ToListAsync();
     }
+    public async Task<List<Booking>> GetAllBookingsByMachineId(string dbName, string machineId)
+    {
+        return await GetCollection(dbName).Find(bookings => machineId == bookings.machineId).ToListAsync();
+    }
 
     public async Task<Booking> CreateBooking(Booking newBooking, string dbName)
     {
@@ -32,13 +36,13 @@ class BookingRepository : IBookingRepository
     {
         var filter = Builders<Booking>.Filter.Eq(booking => booking.id, existingBooking.id);
         var update = Builders<Booking>.Update.Set(booking => booking.slots, existingBooking.slots).
-        Set(booking => booking.reservationsLeft, existingBooking.reservationsLeft);
+        Set(booking => booking.reservationsLeft, existingBooking.reservationsLeft).Set(booking => booking.startTime, existingBooking.startTime);
 
         await GetCollection(dbName).UpdateOneAsync(filter, update);
         return existingBooking;
     }
 
-    public async Task<Booking> GetBookingsById(string userId, string dbName)
+    public async Task<Booking> GetBookingsByUserId(string userId, string dbName)
     {
         return await GetCollection(dbName).Find(booking => booking.userId == userId).FirstOrDefaultAsync();
     }

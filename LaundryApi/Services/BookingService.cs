@@ -16,6 +16,10 @@ namespace LaundryBooking.Services
         {
             return await _bookingRepository.GetAllBookingsByBuildingId(user);
         }
+        public async Task<List<Booking>> GetAllBookingsByMachineId(string dbName, string machineId)
+        {
+            return await _bookingRepository.GetAllBookingsByMachineId(dbName, machineId);
+        }
 
         public async Task<Booking> CreateBooking(Booking newBooking, string dbName)
         {
@@ -26,9 +30,9 @@ namespace LaundryBooking.Services
             return await _bookingRepository.UpdateBooking(existingBooking, dbName);
         }
 
-        public async Task<Booking> GetBookingsById(string userId, string dbName)
+        public async Task<Booking> GetBookingsByUserId(string userId, string dbName)
         {
-            return await _bookingRepository.GetBookingsById(userId, dbName);
+            return await _bookingRepository.GetBookingsByUserId(userId, dbName);
         }
 
 

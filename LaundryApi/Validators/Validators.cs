@@ -101,6 +101,14 @@ namespace LaundryApi.Validators
             var slotEndUtc = DateTime.UtcNow.AddHours(endHour).AddMinutes(endMinute);
             return slotEndUtc < nowUtc;
         }
+        public static bool IsTimeSlotInThePast(DateTime endTime)
+        {
+
+            var nowUtc = DateTime.UtcNow;
+
+            var slotEndUtc = endTime.ToUniversalTime();
+            return slotEndUtc < nowUtc;
+        }
     }
 
 }
