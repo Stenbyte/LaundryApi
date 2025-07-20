@@ -45,6 +45,10 @@ namespace LaundryBooking.Services
             return await _bookingRepository.FindBookingsByUserId(userId, dbName);
         }
 
+        public async Task<bool> CancelBooking(string userId, string dbName)
+        {
+            return await _bookingRepository.CancelBooking(userId, dbName);
+        }
 
         //         public async Task<T?> GetById<T>(string collectionName, string id) where T : IEntity
         //         {

@@ -18,4 +18,6 @@ public interface IBookingService
 
     Task<Booking> FindBookingsByUserId(string userId, string dbName);
 
+    Task<bool> CancelBooking(string userId, string dbName);
+
 }

@@ -1,5 +1,5 @@
 using FluentValidation;
-using LaundryApi.Controllers;
+using LaundryApi.Exceptions;
 using LaundryApi.Models;
 using Microsoft.AspNetCore.Identity.Data;
 
@@ -101,13 +101,30 @@ namespace LaundryApi.Validators
             var slotEndUtc = DateTime.UtcNow.AddHours(endHour).AddMinutes(endMinute);
             return slotEndUtc < nowUtc;
         }
-        public static bool IsTimeSlotInThePast(DateTime endTime)
+        public static void IsTimeSlotInThePast(DateTime time)
         {
 
             var nowUtc = DateTime.UtcNow;
 
-            var slotEndUtc = endTime.ToUniversalTime();
-            return slotEndUtc < nowUtc;
+            var slotEndUtc = time.ToUniversalTime();
+            if (slotEndUtc < nowUtc)
+            {
+                throw new CustomException("Cannot create a reservation for a past time", null, 400);
+            }
+        }
+
+        public static void IsBookingHoursWithinRange(DateTime startTime, DateTime endTime)
+        {
+            DateTime _startTime = startTime;
+            DateTime _endTime = endTime;
+
+            int startHour = _startTime.Hour;
+            int endHour = _endTime.Hour;
+            bool isInRange = startHour >= 8 & endHour <= 20;
+            if (!isInRange)
+            {
+                throw new CustomException("Time is not within the range", null, 400);
+            }
         }
     }
 

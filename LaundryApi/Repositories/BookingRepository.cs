@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using LaundryApi.Models;
 using MongoDB.Driver;
 
@@ -55,5 +56,11 @@ class BookingRepository : IBookingRepository
     public async Task<Booking> FindBookingsByUserId(string userId, string dbName)
     {
         return await GetCollection(dbName).Find(b => b.userId == userId).FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> CancelBooking(string userId, string dbName)
+    {
+        var result = await GetCollection(dbName).DeleteOneAsync(b => b.userId == userId);
+        return result.DeletedCount > 0;
     }
 }

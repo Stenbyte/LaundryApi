@@ -17,4 +17,5 @@ public interface IBookingRepository
 
     Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId, string dbName);
     Task<Booking> FindBookingsByUserId(string userId, string dbName);
+    Task<bool> CancelBooking(string userId, string dbName);
 }

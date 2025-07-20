@@ -15,8 +15,8 @@ namespace LaundryApi.Models
         [BsonElement("machineId")]
         public string? machineId { get; set; }
         [BsonElement("startTime")]
-        public DateTime startTime { get; set; }
-        public DateTime endTime { get; set; }
+        public DateTime? startTime { get; set; }
+        public DateTime? endTime { get; set; }
         public bool booked { get; set; } = false;
 
         [BsonElement("slots")]
@@ -29,8 +29,10 @@ namespace LaundryApi.Models
         public int reservationsLeft { get; set; } = 3;
         public void ConvertToUtc()
         {
-            startTime = DateTime.SpecifyKind(startTime, DateTimeKind.Utc);
-            endTime = DateTime.SpecifyKind(endTime, DateTimeKind.Utc);
+            if (startTime.HasValue)
+                startTime = DateTime.SpecifyKind(startTime.Value, DateTimeKind.Utc);
+            if (endTime.HasValue)
+                endTime = DateTime.SpecifyKind(endTime.Value, DateTimeKind.Utc);
         }
     }
     public class BookingSlot

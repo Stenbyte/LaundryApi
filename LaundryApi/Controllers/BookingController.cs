@@ -115,11 +115,22 @@ namespace LaundryBooking.Controllers
             {
                 throw new CustomException("Machine id is not valid", null, 400);
             }
-            if (TimeSlotValidator.IsTimeSlotInThePast(request.endTime))
+            request.ConvertToUtc();
+
+
+            if (request.startTime == null || request.endTime == null)
             {
-                throw new CustomException("Cannot create a reservation for a past time", null, 400);
+                throw new CustomException("Start time or end time cannot be null", null, 400);
             }
-            // create date from request and validate created date before fetching anything
+
+            if (request.endTime.HasValue)
+            {
+                TimeSlotValidator.IsTimeSlotInThePast(request.endTime.Value);
+            }
+
+            TimeSlotValidator.IsBookingHoursWithinRange(request.startTime.Value, request.endTime.Value);
+
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             User? user = await _laundryService.FindUserById(userId!);
@@ -128,38 +139,46 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-
-
             Booking? existingBooking = await _bookingService.GetBookingsByUserId(userId!, user.dbName);
+
+            request.machineId = "washing";
             List<Booking> getAllBookingsByMachineId = await _bookingService.GetAllBookingsByMachineId(user.dbName, request.machineId!);
+
             Booking bookingToReturn;
             request.id = ObjectId.GenerateNewId().ToString();
-            // request.ConvertToUtc();
+
             request.booked = true;
 
-            if (existingBooking != null && existingBooking?.reservationsLeft == 0)
+            if (getAllBookingsByMachineId.Count > 0)
             {
-                throw new CustomException("You can not add new reservation", null, 403);
-            }
-
-            bool foundExistingSlotMatch = false;
-
-            foreach (var booking in getAllBookingsByMachineId)
-            {
-                foundExistingSlotMatch = booking.startTime == request.startTime;
-
-
-                if (foundExistingSlotMatch)
+                if (existingBooking != null && existingBooking?.reservationsLeft == 0)
                 {
-                    throw new CustomException("Time slot is already taken", request.startTime, 403);
+                    throw new CustomException("You can not add new reservation", null, 403);
+                }
+
+                bool foundExistingSlotMatch = false;
+
+                foreach (var booking in getAllBookingsByMachineId)
+                {
+                    foundExistingSlotMatch = booking.startTime == request.startTime;
+
+
+                    if (foundExistingSlotMatch)
+                    {
+                        throw new CustomException("Time slot is already taken", request.startTime, 403);
+                    }
                 }
             }
 
+            int initialReservationCount = 3;
+
+
             var newBooking = new Booking {
                 userId = userId!,
-                startTime = DateTime.SpecifyKind(DateTime.Parse("08:00"), DateTimeKind.Utc),
-                endTime = DateTime.SpecifyKind(DateTime.Parse("11:00"), DateTimeKind.Utc),
-                reservationsLeft = existingBooking!.reservationsLeft,
+                machineId = request.machineId,
+                startTime = request.startTime,
+                endTime = request.endTime,
+                reservationsLeft = (existingBooking != null && existingBooking.reservationsLeft > 0) ? existingBooking.reservationsLeft - 1 : initialReservationCount,
                 buildingId = user.adress.id
             };
             bookingToReturn = newBooking;
@@ -193,13 +212,16 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-
+            // TODO fix search in here as well when FE is done
             var existingBooking = await _bookingService.FindByUserAndSlotId(request.id, userId, user.dbName);
             if (existingBooking == null)
             {
                 return NotFound("Bookings is not found");
             }
             existingBooking.slots = existingBooking.slots.Where(slot => slot.id != request.id).ToList();
+            // TODO enable when FE will be ready
+            // existingBooking.startTime = null;
+            // existingBooking.endTime = null;
             existingBooking.reservationsLeft++;
 
             await _bookingService.UpdateBooking(existingBooking, user.dbName);
@@ -227,6 +249,8 @@ namespace LaundryBooking.Controllers
             existingBooking.slots = new List<BookingSlot>();
             existingBooking.reservationsLeft = 3;
 
+            // TODO enable this when front end is done ?
+            // await _bookingService.CancelBooking(user.id!, user.dbName);
             await _bookingService.UpdateBooking(existingBooking, user.dbName);
             return CreatedAtAction(nameof(CancelBookings), new { existingBooking.id });
         }
