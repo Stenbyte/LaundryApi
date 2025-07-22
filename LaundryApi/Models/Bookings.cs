@@ -12,7 +12,9 @@ namespace LaundryApi.Models
         [BsonElement("userId")]
         [BsonRepresentation(BsonType.ObjectId)]
         public required string userId { get; set; } = string.Empty;
+
         [BsonElement("machineId")]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string? machineId { get; set; }
         [BsonElement("startTime")]
         public DateTime? startTime { get; set; }
@@ -21,6 +23,7 @@ namespace LaundryApi.Models
 
         [BsonElement("slots")]
         public List<BookingSlot> slots { get; set; } = new();
+
         [BsonElement("buildingId")]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? buildingId { get; set; }

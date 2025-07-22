@@ -6,6 +6,7 @@ using System.Security.Claims;
 using LaundryApi.Exceptions;
 using MongoDB.Bson;
 using LaundryApi.Validators;
+using LaundryApi.Enums;
 
 namespace LaundryBooking.Controllers
 {
@@ -19,17 +20,35 @@ namespace LaundryBooking.Controllers
 
 
         [HttpGet("getAll")]
-        public async Task<List<Booking>> Get()
+        public async Task<List<Booking>> GetAllBookingsByMachineId()
+        // add request string for machine id
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+            string machineId = "687cb55ee117a61dcb72974f";
             User? user = await _laundryService.FindUserById(userId!);
             if (user == null)
             {
                 throw new CustomException("user is not found", null, 404);
             }
 
-            List<Booking> bookings = await _bookingService.GetAllBookingsByBuildingId(user);
+            if (!ObjectId.TryParse(machineId, out var _) || !ObjectId.TryParse(userId, out var _))
+            {
+                throw new CustomException("invalid Id");
+            }
+
+            MachineModel? machineExists = await _bookingService.GetMachine(user.dbName, machineId);
+
+            if (machineExists == null || string.IsNullOrEmpty(machineExists.id))
+            {
+                throw new CustomException("Machine id is null or empty", null, 400);
+            }
+
+            if (machineExists.status == MachineStatus.maintenance)
+            {
+                throw new CustomException($"Can not fetch data for machine with status: {machineExists.status}");
+            }
+
+            List<Booking> bookings = await _bookingService.GetAllBookingsByMachineId(user, machineExists.id);
             return bookings;
         }
 
@@ -93,6 +112,7 @@ namespace LaundryBooking.Controllers
             {
                 var newBooking = new Booking {
                     userId = userId!,
+                    machineId = "687cb55ee117a61dcb72974f",
                     slots = new List<BookingSlot> { request },
                     reservationsLeft = 2,
                     buildingId = user.adress.id
@@ -139,19 +159,18 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-            Booking? existingBooking = await _bookingService.GetBookingsByUserId(userId!, user.dbName);
 
-            request.machineId = "washing";
-            List<Booking> getAllBookingsByMachineId = await _bookingService.GetAllBookingsByMachineId(user.dbName, request.machineId!);
+            request.machineId = "687cb55ee117a61dcb72974f";
+            List<Booking> getAllBookingsByMachineId = await _bookingService.GetAllBookingsByMachineId(user, request.machineId!);
 
             Booking bookingToReturn;
             request.id = ObjectId.GenerateNewId().ToString();
 
             request.booked = true;
 
-            if (getAllBookingsByMachineId.Count > 0)
+            if (getAllBookingsByMachineId != null && getAllBookingsByMachineId.Count > 0)
             {
-                if (existingBooking != null && existingBooking?.reservationsLeft == 0)
+                if (getAllBookingsByMachineId.Count == 3)
                 {
                     throw new CustomException("You can not add new reservation", null, 403);
                 }
@@ -170,15 +189,13 @@ namespace LaundryBooking.Controllers
                 }
             }
 
-            int initialReservationCount = 3;
-
 
             var newBooking = new Booking {
                 userId = userId!,
                 machineId = request.machineId,
                 startTime = request.startTime,
                 endTime = request.endTime,
-                reservationsLeft = (existingBooking != null && existingBooking.reservationsLeft > 0) ? existingBooking.reservationsLeft - 1 : initialReservationCount,
+                reservationsLeft = getAllBookingsByMachineId != null ? getAllBookingsByMachineId.Count : 2,
                 buildingId = user.adress.id
             };
             bookingToReturn = newBooking;
@@ -213,19 +230,19 @@ namespace LaundryBooking.Controllers
             }
 
             // TODO fix search in here as well when FE is done
-            var existingBooking = await _bookingService.FindByUserAndSlotId(request.id, userId, user.dbName);
+            var existingBooking = await _bookingService.GetAllBookingsByMachineId(user, "687cb55ee117a61dcb72974f");
             if (existingBooking == null)
             {
                 return NotFound("Bookings is not found");
             }
-            existingBooking.slots = existingBooking.slots.Where(slot => slot.id != request.id).ToList();
+            existingBooking[0].slots = existingBooking[0].slots.Where(slot => slot.id != request.id).ToList();
             // TODO enable when FE will be ready
             // existingBooking.startTime = null;
             // existingBooking.endTime = null;
-            existingBooking.reservationsLeft++;
+            existingBooking[0].reservationsLeft++;
 
-            await _bookingService.UpdateBooking(existingBooking, user.dbName);
-            return CreatedAtAction(nameof(EditBookingById), new { existingBooking.id });
+            await _bookingService.UpdateBooking(existingBooking[0], user.dbName);
+            return CreatedAtAction(nameof(EditBookingById), new { existingBooking[0].id });
         }
 
         [HttpPost("cancel")]
@@ -253,6 +270,27 @@ namespace LaundryBooking.Controllers
             // await _bookingService.CancelBooking(user.id!, user.dbName);
             await _bookingService.UpdateBooking(existingBooking, user.dbName);
             return CreatedAtAction(nameof(CancelBookings), new { existingBooking.id });
+        }
+
+
+        [HttpGet("getAllMachines")]
+        public async Task<List<MachineModel>> GetAllMachinesByBuildingId()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            User? user = await _laundryService.FindUserById(userId!);
+            if (user == null)
+            {
+                throw new CustomException("user is not found", null, 404);
+            }
+
+            if (!ObjectId.TryParse(userId, out var _))
+            {
+                throw new CustomException("invalid Id");
+            }
+
+            List<MachineModel> bookings = await _bookingService.GetAllMachinesByBuildingId(user);
+            return bookings;
         }
     }
 }

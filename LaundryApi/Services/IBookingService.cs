@@ -6,7 +6,7 @@ namespace LaundryApi.Services;
 public interface IBookingService
 {
     Task<List<Booking>> GetAllBookingsByBuildingId(User user);
-    Task<List<Booking>> GetAllBookingsByMachineId(string dbName, string machineId);
+    Task<List<Booking>> GetAllBookingsByMachineId(User user, string machineId);
 
     Task<Booking> CreateBooking(Booking newBooking, string dbName);
 
@@ -19,5 +19,8 @@ public interface IBookingService
     Task<Booking> FindBookingsByUserId(string userId, string dbName);
 
     Task<bool> CancelBooking(string userId, string dbName);
+    Task<MachineModel> GetMachine(string dbName, string machineId);
+
+    Task<List<MachineModel>> GetAllMachinesByBuildingId(User user);
 
 }
