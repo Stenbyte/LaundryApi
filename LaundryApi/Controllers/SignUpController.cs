@@ -37,8 +37,11 @@ namespace LaundryApi.Controllers
             }
 
             await AddDbNameToUser(newUser);
+            // enable it only when admin panel will be ready or com up with better idea
             // var hashPassword = BCrypt.Net.BCrypt.HashPassword(newUser.password);
             // newUser.password = hashPassword;
+
+            // add here adding machine collection for same db
 
             try
             {

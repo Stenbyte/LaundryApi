@@ -57,7 +57,6 @@ namespace LaundryBooking.Controllers
 
         public async Task<IActionResult> CreateBooking([FromBody] BookingSlot request)
         {
-
             if (TimeSlotValidator.IsTimeSlotInThePast(request.timeSlots))
             {
                 throw new CustomException("Cannot create a reservation for a past time", null, 400);
