@@ -24,12 +24,18 @@ namespace LaundryBooking.Controllers
         // add request string for machine id
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            string machineId = "687cb55ee117a61dcb72974f";
             User? user = await _laundryService.FindUserById(userId!);
             if (user == null)
             {
                 throw new CustomException("user is not found", null, 404);
             }
+
+            var machines = await _bookingService.GetAllMachinesByBuildingId(user);
+            if (machines == null || machines.Count == 0)
+            {
+                throw new CustomException("No machines found for the user's building", null, 404);
+            }
+            string machineId = machines[0].id;
 
             if (!ObjectId.TryParse(machineId, out var _) || !ObjectId.TryParse(userId, out var _))
             {
@@ -77,6 +83,12 @@ namespace LaundryBooking.Controllers
             request.id = ObjectId.GenerateNewId().ToString();
             request.ConvertToUtc();
             request.booked = true;
+            var machines = await _bookingService.GetAllMachinesByBuildingId(user);
+            if (machines == null || machines.Count == 0)
+            {
+                throw new CustomException("No machines found for the user's building", null, 404);
+            }
+            string machineId = machines[0].id;
             if (existingBooking != null)
             {
                 if (existingBooking?.reservationsLeft == 0)
@@ -111,7 +123,7 @@ namespace LaundryBooking.Controllers
             {
                 var newBooking = new Booking {
                     userId = userId!,
-                    machineId = "687cb55ee117a61dcb72974f",
+                    machineId = machineId,
                     slots = new List<BookingSlot> { request },
                     reservationsLeft = 2,
                     buildingId = user.adress.id

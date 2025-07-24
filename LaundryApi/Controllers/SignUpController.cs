@@ -5,14 +5,16 @@ using Microsoft.Extensions.Options;
 using LaundryApi.Exceptions;
 using MongoDB.Bson;
 using LaundryApi.Validators;
+using LaundryApi.Enums;
 
 
 namespace LaundryApi.Controllers
 {
     [Route("api/[controller]")]
-    public class SignUpController(ILaundryService laundryService, IOptions<MongoDBSettings> mongoSettings, SignUpValidator signupValidator) : ControllerBase
+    public class SignUpController(ILaundryService laundryService, IOptions<MongoDBSettings> mongoSettings, SignUpValidator signupValidator, IBookingService bookingService) : ControllerBase
     {
         private readonly ILaundryService _laundryService = laundryService;
+        private readonly IBookingService _bookingService = bookingService;
         private readonly IOptions<MongoDBSettings> _mongoSettings = mongoSettings;
         private readonly SignUpValidator _validator = signupValidator;
 
@@ -37,6 +39,13 @@ namespace LaundryApi.Controllers
             }
 
             await AddDbNameToUser(newUser);
+            MachineModel newMachine = new MachineModel() {
+                status = MachineStatus.available,
+                name = MachineName.washingMachine,
+                buildingId = newUser.adress.id!,
+                id = ObjectId.GenerateNewId().ToString()
+            };
+            await _bookingService.CreateMachine(newUser.dbName, newMachine);
             // enable it only when admin panel will be ready or com up with better idea
             // var hashPassword = BCrypt.Net.BCrypt.HashPassword(newUser.password);
             // newUser.password = hashPassword;

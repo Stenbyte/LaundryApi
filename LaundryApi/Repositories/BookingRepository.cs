@@ -76,4 +76,10 @@ class BookingRepository : IBookingRepository
     {
         return await GetCollection<MachineModel>(user.dbName, "Machine").Find(x => x.buildingId == user.adress.id).ToListAsync();
     }
+
+    public async Task<MachineModel> CreateMachine(string dbName, MachineModel newMachine)
+    {
+        await GetCollection<MachineModel>(dbName, "Machine").InsertOneAsync(newMachine);
+        return newMachine;
+    }
 }

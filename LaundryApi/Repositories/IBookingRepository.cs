@@ -20,4 +20,6 @@ public interface IBookingRepository
     Task<bool> CancelBooking(string userId, string dbName);
     Task<MachineModel> GetMachine(string dbName, string machineId);
     Task<List<MachineModel>> GetAllMachinesByBuildingId(User user);
+
+    Task<MachineModel> CreateMachine(string dbName, MachineModel newMachine);
 }

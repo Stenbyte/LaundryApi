@@ -23,4 +23,5 @@ public interface IBookingService
 
     Task<List<MachineModel>> GetAllMachinesByBuildingId(User user);
 
+    Task<MachineModel> CreateMachine(string dbName, MachineModel newMachine);
 }
