@@ -19,8 +19,8 @@ namespace LaundryApi.Models
         // [BsonElement("phoneNumber")]
         // public required PhoneNumber phoneNumber { get; set; }
 
-        // [BsonElement("password")]
-        // public required string password { get; set; }
+        [BsonElement("password")]
+        public required string password { get; set; }
 
         [BsonElement("adress")]
         public required Adress adress { get; set; }

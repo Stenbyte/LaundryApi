@@ -51,9 +51,9 @@ namespace LaundryApi.Controllers
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
             var user = await _layndryService.FindUserByEmail(request.email);
-            // if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.password))
-            if (user == null)
-            {
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.password, user.password))
+                if (user == null)
+                {
                 new HelperFunctions().TrackFailedAttempt(request.email, _cache);
                 return Unauthorized(new { message = "Invalid credentials" });
             }
