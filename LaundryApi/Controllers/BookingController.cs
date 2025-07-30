@@ -170,7 +170,7 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-
+            // TODO fix here later machine search
             request.machineId = "687cb55ee117a61dcb72974f";
             List<Booking> getAllBookingsByMachineId = await _bookingService.GetAllBookingsByMachineId(user, request.machineId!);
 
@@ -240,8 +240,14 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("user is not found", null, 404);
             }
 
-            // TODO fix search in here as well when FE is done
-            var existingBooking = await _bookingService.GetAllBookingsByMachineId(user, "687cb55ee117a61dcb72974f");
+
+            var machines = await _bookingService.GetAllMachinesByBuildingId(user);
+            if (machines == null || machines.Count == 0)
+            {
+                throw new CustomException("No machines found for the user's building", null, 404);
+            }
+            string machineId = machines[0].id;
+            var existingBooking = await _bookingService.GetAllBookingsByMachineId(user, machineId!);
             if (existingBooking == null)
             {
                 return NotFound("Bookings is not found");
