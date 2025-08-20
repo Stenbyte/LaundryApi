@@ -1,13 +1,17 @@
+using System.Text.Json.Serialization;
 
 namespace LaundryApi.Enums;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MachineStatus
 {
-    available = 0,
-    maintenance = 1
+    available,
+    maintenance
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MachineName {
-    washingMachine = 0,
-    dryerMachine = 1
+    washingMachine,
+    dryerMachine
 }
 
