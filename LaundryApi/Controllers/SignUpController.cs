@@ -41,7 +41,7 @@ namespace LaundryApi.Controllers
             await AddDbNameToUser(newUser);
             MachineModel newMachine = new MachineModel() {
                 status = MachineStatus.available,
-                name = MachineName.washingMachine,
+                name = MachineName.washing,
                 buildingId = newUser.adress.id!,
                 id = ObjectId.GenerateNewId().ToString()
             };

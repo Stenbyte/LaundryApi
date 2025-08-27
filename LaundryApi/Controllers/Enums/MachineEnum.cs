@@ -11,7 +11,7 @@ public enum MachineStatus
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MachineName {
-    washingMachine,
-    dryerMachine
+    washing,
+    dryer
 }
 
