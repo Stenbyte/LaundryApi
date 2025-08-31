@@ -38,7 +38,7 @@ public class LaundryRepository : ILaundryRepository
 
     public async Task<User?> FindUserById(string userId)
     {
-        var existingUser = await _userCollection.Find(user => user.id == userId).FirstOrDefaultAsync();
+        var existingUser = await _userCollection.Find(user => user._id == userId).FirstOrDefaultAsync();
 
         return existingUser;
     }
@@ -66,7 +66,7 @@ public class LaundryRepository : ILaundryRepository
     public async Task UpdateUser(User userToUpdate)
     {
         // revisit if i need return a result ?
-        var filter = Builders<User>.Filter.Eq(user => user.id, userToUpdate.id);
+        var filter = Builders<User>.Filter.Eq(user => user._id, userToUpdate._id);
         var update = Builders<User>.Update
             .Set(u => u.refreshToken, userToUpdate.refreshToken)
             .Set(u => u.refreshTokenExpiry, userToUpdate.refreshTokenExpiry);

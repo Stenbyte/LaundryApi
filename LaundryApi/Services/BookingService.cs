@@ -65,10 +65,10 @@ namespace LaundryBooking.Services
             return await _bookingRepository.CreateMachine(dbName, newMachine);
         }
 
-        //         public async Task<T?> GetById<T>(string collectionName, string id) where T : IEntity
+        //         public async Task<T?> GetById<T>(string collectionName, string _id) where T : IEntity
         //         {
         //             var collection = GetCollection<T>(collectionName);
-        //             return await collection.Find(x => x._id == id).FirstOrDefaultAsync();
+        //             return await collection.Find(x => x._id == _id).FirstOrDefaultAsync();
         //         }
         // 
         //         public async Task Create<T>(string collectionName, T entity)

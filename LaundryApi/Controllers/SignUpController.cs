@@ -21,9 +21,9 @@ namespace LaundryApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(User newUser)
         {
-            if (string.IsNullOrEmpty(newUser.id))
+            if (string.IsNullOrEmpty(newUser._id))
             {
-                newUser.id = ObjectId.GenerateNewId().ToString();
+                newUser._id = ObjectId.GenerateNewId().ToString();
             }
             var validationResult = await _validator.ValidateAsync(newUser);
 
@@ -42,8 +42,8 @@ namespace LaundryApi.Controllers
             MachineModel newMachine = new MachineModel() {
                 status = MachineStatus.available,
                 name = MachineName.washing,
-                buildingId = newUser.adress.id!,
-                id = ObjectId.GenerateNewId().ToString()
+                buildingId = newUser.adress._id!,
+                _id = ObjectId.GenerateNewId().ToString()
             };
             await _bookingService.CreateMachine(newUser.dbName, newMachine);
             // enable it only when admin panel will be ready or com up with better idea
@@ -60,7 +60,7 @@ namespace LaundryApi.Controllers
             {
                 throw new CustomException("Unable to create new user", ex, 400);
             }
-            return CreatedAtAction(nameof(CreateUser), new { id = newUser.id });
+            return CreatedAtAction(nameof(CreateUser), new { _id = newUser._id });
         }
 
         private async Task<User> AddDbNameToUser(User newUser)
@@ -69,12 +69,12 @@ namespace LaundryApi.Controllers
             if (existingUserWithSameDb != null)
             {
                 newUser.dbName = existingUserWithSameDb.dbName;
-                newUser.adress.id = existingUserWithSameDb.adress.id;
+                newUser.adress._id = existingUserWithSameDb.adress._id;
             }
             else
             {
                 newUser.dbName = $"Laundry_{newUser.adress.streetName}";
-                newUser.adress.id = ObjectId.GenerateNewId().ToString();
+                newUser.adress._id = ObjectId.GenerateNewId().ToString();
             }
             return newUser;
         }

@@ -18,13 +18,13 @@ class BookingRepository : IBookingRepository
     }
     public async Task<List<Booking>> GetAllBookingsByBuildingId(User user)
     {
-        return await GetCollection<Booking>(user.dbName).Find(bookings => user.adress.id == bookings.buildingId).ToListAsync();
+        return await GetCollection<Booking>(user.dbName).Find(bookings => user.adress._id == bookings.buildingId).ToListAsync();
     }
     public async Task<List<Booking>> GetAllBookingsByMachineId(User user, string machineId)
     {
         var filter = Builders<Booking>.Filter.And(
             Builders<Booking>.Filter.Eq(x => x.machineId, machineId),
-            Builders<Booking>.Filter.Eq(x => x.userId, user.id)
+            Builders<Booking>.Filter.Eq(x => x.userId, user._id)
 
         );
         return await GetCollection<Booking>(user.dbName).Find(filter).ToListAsync();
@@ -38,7 +38,7 @@ class BookingRepository : IBookingRepository
 
     public async Task<Booking> UpdateBooking(Booking existingBooking, string dbName)
     {
-        var filter = Builders<Booking>.Filter.Eq(booking => booking.id, existingBooking.id);
+        var filter = Builders<Booking>.Filter.Eq(booking => booking._id, existingBooking._id);
         var update = Builders<Booking>.Update.Set(booking => booking.slots, existingBooking.slots).
         Set(booking => booking.reservationsLeft, existingBooking.reservationsLeft).Set(booking => booking.startTime, existingBooking.startTime);
 
@@ -53,7 +53,7 @@ class BookingRepository : IBookingRepository
 
     public async Task<Booking> FindByUserAndSlotId(string bookingSlotId, string userId, string dbName)
     {
-        return await GetCollection<Booking>(dbName).Find(b => b.userId == userId && b.slots.Any(slot => slot.id == bookingSlotId)).FirstOrDefaultAsync();
+        return await GetCollection<Booking>(dbName).Find(b => b.userId == userId && b.slots.Any(slot => slot._id == bookingSlotId)).FirstOrDefaultAsync();
     }
 
     public async Task<Booking> FindBookingsByUserId(string userId, string dbName)
@@ -69,12 +69,12 @@ class BookingRepository : IBookingRepository
 
     public async Task<MachineModel> GetMachine(string dbName, string machineId)
     {
-        return await GetCollection<MachineModel>(dbName, "Machine").Find(machine => machine.id == machineId).FirstOrDefaultAsync();
+        return await GetCollection<MachineModel>(dbName, "Machine").Find(machine => machine._id == machineId).FirstOrDefaultAsync();
     }
 
     public async Task<List<MachineModel>> GetAllMachinesByBuildingId(User user)
     {
-        return await GetCollection<MachineModel>(user.dbName, "Machine").Find(x => x.buildingId == user.adress.id).ToListAsync();
+        return await GetCollection<MachineModel>(user.dbName, "Machine").Find(x => x.buildingId == user.adress._id).ToListAsync();
     }
 
     public async Task<MachineModel> CreateMachine(string dbName, MachineModel newMachine)

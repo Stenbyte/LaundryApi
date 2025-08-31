@@ -7,7 +7,7 @@ namespace LaundryApi.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? id { get; set; }
+        public string? _id { get; set; }
 
         [BsonElement("userId")]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -41,7 +41,7 @@ namespace LaundryApi.Models
     public class BookingSlot
     {
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? id { get; set; }
+        public string? _id { get; set; }
         [BsonElement("day")]
         public required DateTime day { get; set; }
         public bool booked { get; set; } = false;
@@ -55,6 +55,6 @@ namespace LaundryApi.Models
     }
     public class EditBookingRequest
     {
-        public string id { get; set; } = null!;
+        public string _id { get; set; } = null!;
     }
 }

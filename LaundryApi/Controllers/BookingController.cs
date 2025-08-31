@@ -21,7 +21,7 @@ namespace LaundryBooking.Controllers
 
         [HttpGet("getAll")]
         public async Task<List<Booking>> GetAllBookingsByMachineId()
-        // add request string for machine id
+        // add request string for machine _id
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             User? user = await _laundryService.FindUserById(userId!);
@@ -35,7 +35,7 @@ namespace LaundryBooking.Controllers
             {
                 throw new CustomException("No machines found for the user's building", null, 404);
             }
-            string machineId = machines[0].id;
+            string machineId = machines[0]._id;
 
             if (!ObjectId.TryParse(machineId, out var _) || !ObjectId.TryParse(userId, out var _))
             {
@@ -44,9 +44,9 @@ namespace LaundryBooking.Controllers
 
             MachineModel? machineExists = await _bookingService.GetMachine(user.dbName, machineId);
 
-            if (machineExists == null || string.IsNullOrEmpty(machineExists.id))
+            if (machineExists == null || string.IsNullOrEmpty(machineExists._id))
             {
-                throw new CustomException("Machine id is null or empty", null, 400);
+                throw new CustomException("Machine _id is null or empty", null, 400);
             }
 
             if (machineExists.status == MachineStatus.maintenance)
@@ -54,7 +54,7 @@ namespace LaundryBooking.Controllers
                 throw new CustomException($"Can not fetch data for machine with status: {machineExists.status}");
             }
 
-            List<Booking> bookings = await _bookingService.GetAllBookingsByMachineId(user, machineExists.id);
+            List<Booking> bookings = await _bookingService.GetAllBookingsByMachineId(user, machineExists._id);
             return bookings;
         }
 
@@ -80,7 +80,7 @@ namespace LaundryBooking.Controllers
             Booking? existingBooking = await _bookingService.GetBookingsByUserId(userId!, user.dbName);
             List<Booking> getAllBookings = await _bookingService.GetAllBookingsByBuildingId(user);
             Booking bookingToReturn;
-            request.id = ObjectId.GenerateNewId().ToString();
+            request._id = ObjectId.GenerateNewId().ToString();
             request.ConvertToUtc();
             request.booked = true;
             var machines = await _bookingService.GetAllMachinesByBuildingId(user);
@@ -88,7 +88,7 @@ namespace LaundryBooking.Controllers
             {
                 throw new CustomException("No machines found for the user's building", null, 404);
             }
-            string machineId = machines[0].id;
+            string machineId = machines[0]._id;
             if (existingBooking != null)
             {
                 if (existingBooking?.reservationsLeft == 0)
@@ -126,7 +126,7 @@ namespace LaundryBooking.Controllers
                     machineId = machineId,
                     slots = new List<BookingSlot> { request },
                     reservationsLeft = 2,
-                    buildingId = user.adress.id
+                    buildingId = user.adress._id
                 };
                 bookingToReturn = newBooking;
                 await _bookingService.CreateBooking(bookingToReturn, user.dbName);
@@ -134,7 +134,7 @@ namespace LaundryBooking.Controllers
 
 
             return CreatedAtAction(nameof(CreateBooking), new {
-                id = bookingToReturn.id
+                _id = bookingToReturn._id
             });
 
         }
@@ -144,7 +144,7 @@ namespace LaundryBooking.Controllers
         {
             if (!ObjectId.TryParse(request.machineId, out var _))
             {
-                throw new CustomException("Machine id is not valid", null, 400);
+                throw new CustomException("Machine _id is not valid", null, 400);
             }
             request.ConvertToUtc();
 
@@ -175,7 +175,7 @@ namespace LaundryBooking.Controllers
             List<Booking> getAllBookingsByMachineId = await _bookingService.GetAllBookingsByMachineId(user, request.machineId!);
 
             Booking bookingToReturn;
-            request.id = ObjectId.GenerateNewId().ToString();
+            request._id = ObjectId.GenerateNewId().ToString();
 
             request.booked = true;
 
@@ -207,14 +207,14 @@ namespace LaundryBooking.Controllers
                 startTime = request.startTime,
                 endTime = request.endTime,
                 reservationsLeft = getAllBookingsByMachineId != null ? getAllBookingsByMachineId.Count : 2,
-                buildingId = user.adress.id
+                buildingId = user.adress._id
             };
             bookingToReturn = newBooking;
             await _bookingService.CreateBooking(bookingToReturn, user.dbName);
 
 
             return CreatedAtAction(nameof(CreateBooking), new {
-                id = bookingToReturn.id
+                _id = bookingToReturn._id
             });
 
         }
@@ -222,7 +222,7 @@ namespace LaundryBooking.Controllers
         [HttpPost("edit")]
         public async Task<IActionResult> EditBookingById([FromBody] EditBookingRequest request)
         {
-            if (!ObjectId.TryParse(request.id, out _))
+            if (!ObjectId.TryParse(request._id, out _))
             {
                 return BadRequest("Invalid booking ID");
             }
@@ -246,20 +246,20 @@ namespace LaundryBooking.Controllers
             {
                 throw new CustomException("No machines found for the user's building", null, 404);
             }
-            string machineId = machines[0].id;
+            string machineId = machines[0]._id;
             var existingBooking = await _bookingService.GetAllBookingsByMachineId(user, machineId!);
             if (existingBooking == null)
             {
                 return NotFound("Bookings is not found");
             }
-            existingBooking[0].slots = existingBooking[0].slots.Where(slot => slot.id != request.id).ToList();
+            existingBooking[0].slots = existingBooking[0].slots.Where(slot => slot._id != request._id).ToList();
             // TODO enable when FE will be ready
             // existingBooking.startTime = null;
             // existingBooking.endTime = null;
             existingBooking[0].reservationsLeft++;
 
             await _bookingService.UpdateBooking(existingBooking[0], user.dbName);
-            return CreatedAtAction(nameof(EditBookingById), new { existingBooking[0].id });
+            return CreatedAtAction(nameof(EditBookingById), new { existingBooking[0]._id });
         }
 
         [HttpPost("cancel")]
@@ -284,9 +284,9 @@ namespace LaundryBooking.Controllers
             existingBooking.reservationsLeft = 3;
 
             // TODO enable this when front end is done ?
-            // await _bookingService.CancelBooking(user.id!, user.dbName);
+            // await _bookingService.CancelBooking(user._id!, user.dbName);
             await _bookingService.UpdateBooking(existingBooking, user.dbName);
-            return CreatedAtAction(nameof(CancelBookings), new { existingBooking.id });
+            return CreatedAtAction(nameof(CancelBookings), new { existingBooking._id });
         }
 
 

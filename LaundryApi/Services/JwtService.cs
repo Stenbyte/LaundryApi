@@ -22,7 +22,7 @@ namespace LaundryApi.Services
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
 
             var claims = new List<Claim> {
-            new Claim(JwtRegisteredClaimNames.Sub, user.id!),
+            new Claim(JwtRegisteredClaimNames.Sub, user._id!),
             new Claim(JwtRegisteredClaimNames.Email, user.email),
             new Claim(ClaimTypes.Role , "User"),
             new Claim("streetName", user.adress.streetName)

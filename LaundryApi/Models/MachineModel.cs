@@ -10,7 +10,7 @@ namespace LaundryApi.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public  string? id { get; set; }
+        public string? _id { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public MachineStatus status { get; set; }
