@@ -63,6 +63,19 @@ builder.Services.AddAuthentication(options => {
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
+
+builder.Services.Configure<PostgresSettings>(
+    builder.Configuration.GetSection("Postgres")
+);
+
+builder.Services.AddSingleton(sp => {
+    var settings = sp.GetRequiredService<IOptions<PostgresSettings>>().Value;
+    var connectionString = $"Host={settings.Host};Port={settings.Port};Database={settings.DatabaseName};Username={settings.UserName};Password={settings.Password}";
+
+    var connection = new Npgsql.NpgsqlConnection(connectionString);
+    return connection;
+});
+
 builder.Services.AddSingleton(sp => {
     var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
     return new MongoClient(settings.ConnectionString);
