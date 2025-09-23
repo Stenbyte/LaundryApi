@@ -114,11 +114,13 @@ var laundryService = scope.ServiceProvider.GetRequiredService<ILaundryService>()
 try
 {
     var dataBase = laundryService.TestConnection();
-    Console.WriteLine($"++++++++++🍏 Connected to MongoDB: ${dataBase}++++++++++++++");
+    var pgStatus = laundryService.TestPgConnection();
+    Console.WriteLine($"++++++++++🍏🍏🍏 Test Connection to MongoDB: ${dataBase}++++++++++++++");
+    Console.WriteLine($"++++++++++🍏🍏🍏${pgStatus}++++++++++++++");
 }
 catch (Exception ex)
 {
-    throw new Exception($"------------🍎 MongoDB Connection failed: ${ex}------------");
+    throw new Exception($"------------🍎🍎🍎 Test Connection failed: ${ex}------------");
 }
 
 if (app.Environment.IsProduction())

@@ -11,11 +11,14 @@ public class LaundryRepository : ILaundryRepository
 {
     private readonly IMongoDatabase _laundryDb;
     private readonly IMongoCollection<User> _userCollection;
+    private readonly Npgsql.NpgsqlConnection _pgConnection;
 
-    public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings)
+    public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, Npgsql.NpgsqlConnection pgConnection)
     {
         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
         _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
+
+        _pgConnection = pgConnection;
     }
 
     public string TestConnection()
@@ -28,6 +31,21 @@ public class LaundryRepository : ILaundryRepository
         catch (CustomException ex)
         {
             throw new CustomException("DataBase connection failed", ex, 500);
+        }
+    }
+
+    public string TestPgConnection()
+    {
+        try
+        {
+            _pgConnection.Open();
+            using var cmd = new Npgsql.NpgsqlCommand("SELECT 1", _pgConnection);
+            var result = cmd.ExecuteScalar();
+            return $"Test Connection to Postgres: {result}";
+        }
+        catch (CustomException ex)
+        {
+            throw new CustomException("🍉🍉🍉Failed to connect to Postgres🍉🍉🍉", ex, 500);
         }
     }
 

@@ -8,6 +8,7 @@ public interface ILaundryRepository
 {
 
     public string TestConnection();
+    public string TestPgConnection();
     Task CreateUser(User user);
 
     Task<User?> FindUserById(string userId);
