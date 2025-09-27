@@ -36,6 +36,17 @@ namespace LaundryApi.Services
                 throw new CustomException("DataBase connection failed", ex, 500);
             }
         }
+        public string TestPgConnectionWithDbContext()
+        {
+            try
+            {
+                return _repository.TestPgConnectionWithDbContext();
+            }
+            catch (CustomException ex)
+            {
+                throw new CustomException("DataBase connection failed", ex, 500);
+            }
+        }
         public async Task CreateUser(string collectionName, User user)
         {
             await _repository.CreateUser(user);

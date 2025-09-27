@@ -1,6 +1,7 @@
 
 using LaundryApi.Exceptions;
 using LaundryApi.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -11,14 +12,18 @@ public class LaundryRepository : ILaundryRepository
 {
     private readonly IMongoDatabase _laundryDb;
     private readonly IMongoCollection<User> _userCollection;
-    private readonly Npgsql.NpgsqlConnection _pgConnection;
+    private readonly Npgsql.NpgsqlConnection? _pgConnection;
 
-    public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, Npgsql.NpgsqlConnection pgConnection)
+    private readonly LaundryDbContext _dbContext;
+
+    public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, Npgsql.NpgsqlConnection pgConnection, LaundryDbContext dBContext)
     {
         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
         _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
 
         _pgConnection = pgConnection;
+
+        _dbContext = dBContext;
     }
 
     public string TestConnection()
@@ -33,6 +38,22 @@ public class LaundryRepository : ILaundryRepository
             throw new CustomException("DataBase connection failed", ex, 500);
         }
     }
+
+    public string TestPgConnectionWithDbContext()
+    {
+        try
+        {
+            var canConnect = _dbContext.Database.CanConnect();
+            return canConnect
+                ? "✅ Successfully connected to Postgres via DbContext"
+                : "❌ Failed to connect to Postgres via DbContext";
+        }
+        catch (Exception ex)
+        {
+            throw new CustomException("🍉🍉🍉 Failed to connect to Postgres with DbContext 🍉🍉🍉", ex, 500);
+        }
+    }
+
 
     public string TestPgConnection()
     {

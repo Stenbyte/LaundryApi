@@ -12,6 +12,8 @@ using LaundryApi.Repository;
 using LaundryBooking.Services;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Npgsql;
+using Microsoft.EntityFrameworkCore;
 
 [assembly: ApiController]
 
@@ -64,17 +66,28 @@ builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
 
-builder.Services.Configure<PostgresSettings>(
-    builder.Configuration.GetSection("Postgres")
-);
+if (!builder.Environment.IsProduction())
+{
+    builder.Services.Configure<PostgresSettings>(
+        builder.Configuration.GetSection("Postgres")
+    );
 
-builder.Services.AddSingleton(sp => {
-    var settings = sp.GetRequiredService<IOptions<PostgresSettings>>().Value;
-    var connectionString = $"Host={settings.Host};Port={settings.Port};Database={settings.DatabaseName};Username={settings.UserName};Password={settings.Password}";
+    builder.Services.AddScoped<NpgsqlConnection>(sp => {
+        var settings = sp.GetRequiredService<IOptions<PostgresSettings>>().Value;
+        var connectionString = $"Host={settings.Host};Port={settings.Port};Database={settings.DatabaseName};Username={settings.UserName};Password={settings.Password}";
 
-    var connection = new Npgsql.NpgsqlConnection(connectionString);
-    return connection;
-});
+        var connection = new NpgsqlConnection(connectionString);
+        return connection;
+    });
+
+    builder.Services.AddDbContext<LaundryDbContext>(options => {
+        var settings = builder.Configuration.GetSection("Postgres").Get<PostgresSettings>();
+
+        options.UseNpgsql($"Host={settings?.Host};Port={settings?.Port};Database={settings?.DatabaseName}Username={settings?.UserName};Password={settings?.Password}");
+    });
+}
+
+
 
 builder.Services.AddSingleton(sp => {
     var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
@@ -114,9 +127,15 @@ var laundryService = scope.ServiceProvider.GetRequiredService<ILaundryService>()
 try
 {
     var dataBase = laundryService.TestConnection();
-    var pgStatus = laundryService.TestPgConnection();
+
+    if (!builder.Environment.IsProduction())
+    {
+
+        var pgStatus = laundryService.TestPgConnection();
+        // var pgStatus = laundryService.TestPgConnectionWithDbContext();
+        Console.WriteLine($"++++++++++🍏🍏🍏${pgStatus}++++++++++++++");
+    }
     Console.WriteLine($"++++++++++🍏🍏🍏 Test Connection to MongoDB: ${dataBase}++++++++++++++");
-    Console.WriteLine($"++++++++++🍏🍏🍏${pgStatus}++++++++++++++");
 }
 catch (Exception ex)
 {
