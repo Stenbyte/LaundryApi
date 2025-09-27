@@ -14,17 +14,22 @@ public class LaundryRepository : ILaundryRepository
     private readonly IMongoCollection<User> _userCollection;
     private readonly Npgsql.NpgsqlConnection? _pgConnection;
 
-    private readonly LaundryDbContext _dbContext;
+    private readonly LaundryDbContext? _dbContext;
 
-    public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, Npgsql.NpgsqlConnection pgConnection, LaundryDbContext dBContext)
+    public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings)
     {
         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
         _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
-
-        _pgConnection = pgConnection;
-
-        _dbContext = dBContext;
     }
+    //     public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, Npgsql.NpgsqlConnection pgConnection, LaundryDbContext dBContext)
+    //     {
+    //         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
+    //         _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
+    // 
+    //         _pgConnection = pgConnection;
+    // 
+    //         _dbContext = dBContext;
+    //     }
 
     public string TestConnection()
     {
