@@ -25,17 +25,7 @@ namespace LaundryApi.Services
                 throw new CustomException("DataBase connection failed", ex, 500);
             }
         }
-        public string TestPgConnection()
-        {
-            try
-            {
-                return _repository.TestPgConnection();
-            }
-            catch (CustomException ex)
-            {
-                throw new CustomException("DataBase connection failed", ex, 500);
-            }
-        }
+
         public string TestPgConnectionWithDbContext()
         {
             try

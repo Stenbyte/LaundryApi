@@ -8,7 +8,6 @@ public interface ILaundryRepository
 {
 
     public string TestConnection();
-    public string TestPgConnection();
     public string TestPgConnectionWithDbContext();
     Task CreateUser(User user);
 
