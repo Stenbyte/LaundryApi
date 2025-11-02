@@ -72,15 +72,7 @@ if (!builder.Environment.IsProduction())
         builder.Configuration.GetSection("Postgres")
     );
 
-    //     builder.Services.AddScoped<NpgsqlConnection>(sp => {
-    //         var settings = sp.GetRequiredService<IOptions<PostgresSettings>>().Value;
-    //         var connectionString = $"Host={settings.Host};Port={settings.Port};Database={settings.DatabaseName};Username={settings.UserName};Password={settings.Password}";
-    // 
-    //         var connection = new NpgsqlConnection(connectionString);
-    //         return connection;
-    //     });
-
-    builder.Services.AddDbContext<LaundryDbContext>(options => {
+    builder.Services.AddDbContextPool<LaundryDbContext>(options => {
         var settings = builder.Configuration.GetSection("Postgres").Get<PostgresSettings>();
 
         options.UseNpgsql($"Host={settings?.Host};Port={settings?.Port};Database={settings?.DatabaseName};Username={settings?.UserName};Password={settings?.Password}");
@@ -130,8 +122,6 @@ try
 
     if (!builder.Environment.IsProduction())
     {
-
-        // var pgStatus = laundryService.TestPgConnection();
         var pgStatus = laundryService.TestPgConnectionWithDbContext();
         Console.WriteLine($"++++++++++🍏🍏🍏${pgStatus}++++++++++++++");
     }
