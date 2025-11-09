@@ -5,21 +5,21 @@ namespace LaundryApi.PostgresModels
     public class UserPg
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public required Guid Id { get; set; } = Guid.NewGuid();
 
         [Required, MaxLength(100)]
-        public string FirstName { get; set; } = "";
+        public required string FirstName { get; set; }
 
         [Required, MaxLength(100)]
-        public string LastName { get; set; } = "";
+        public required string LastName { get; set; }
 
-        [Required, MaxLength(200)]
-        public string Email { get; set; } = "";
+        [Required, MaxLength(100)]
+        public required string Email { get; set; }
 
-        [Required]
-        public required string Password { get; set; } = "";
+        [Required, MaxLength(16)]
+        public required string Password { get; set; }
 
-        public bool IsAdmin { get; set; } = false;
+        public bool? IsAdmin { get; set; }
 
         public ICollection<UserProperty> UserProperties { get; set; } = new List<UserProperty>();
 
