@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LaundryApi.PostgresModels
 {
+    [Table("Properties")]
     public class Property
     {
-        [Key]
+        [Required, Key]
         public required Guid Id { get; set; } = Guid.NewGuid();
 
         [Required, MaxLength(200)]

@@ -1,10 +1,12 @@
 namespace LaundryApi.PostgresModels
 {
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
+    [Table("Users")]
     public class UserPg
     {
-        [Key]
+        [Required, Key]
         public required Guid Id { get; set; } = Guid.NewGuid();
 
         [Required, MaxLength(100)]
@@ -20,7 +22,6 @@ namespace LaundryApi.PostgresModels
         public required string Password { get; set; }
 
         public bool? IsAdmin { get; set; }
-
         public ICollection<UserProperty> UserProperties { get; set; } = new List<UserProperty>();
 
     }
