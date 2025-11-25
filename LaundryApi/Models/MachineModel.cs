@@ -14,9 +14,11 @@ namespace LaundryApi.Models
 
         [JsonConverter(typeof(StringEnumConverter))]
         public MachineStatus status { get; set; }
+
         [JsonConverter(typeof(StringEnumConverter))]
-        public MachineName name {get; set;}
+        public MachineName name { get; set; }
+
         [BsonRepresentation(BsonType.ObjectId)]
-        public required string buildingId {get; set;}
+        public required string buildingId { get; set; }
     }
 }
