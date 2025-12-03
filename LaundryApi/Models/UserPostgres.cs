@@ -1,4 +1,4 @@
-namespace LaundryApi.PostgresModels
+namespace LaundryApi.Models
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

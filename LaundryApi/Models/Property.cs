@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LaundryApi.PostgresModels
+namespace LaundryApi.Models
 {
     [Table("Properties")]
     public class Property
