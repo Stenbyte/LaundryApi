@@ -1,6 +1,5 @@
-using LaundryApi.PostgresModels;
+using LaundryApi.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 public class LaundryDbContext : DbContext
 {
@@ -22,5 +21,13 @@ public class LaundryDbContext : DbContext
         modelBuilder.Entity<UserPg>(e => {
             e.HasIndex(u => u.Email).IsUnique();
         });
+
+
+        // add value converter and conversion for adress e.g. !!!!
+        // add value conversion for dates later
+        // maybe add owned types for entityt https://learn.microsoft.com/en-us/ef/core/modeling/owned-entities do it later when something arises
+        // add encryption Always Encrypted on SQL Server. for value conversion later
+
+        // consider bulk config when completely switched to postgresql
     }
 }
