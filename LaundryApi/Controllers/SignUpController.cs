@@ -11,9 +11,10 @@ using LaundryApi.Enums;
 namespace LaundryApi.Controllers
 {
     [Route("api/[controller]")]
-    public class SignUpController(ILaundryService laundryService, IOptions<MongoDBSettings> mongoSettings, SignUpValidator signupValidator, IBookingService bookingService) : ControllerBase
+    public class SignUpController(ILaundryService laundryService, IOptions<MongoDBSettings> mongoSettings, SignUpValidator signupValidator, IBookingService bookingService, IUserService userService) : ControllerBase
     {
         private readonly ILaundryService _laundryService = laundryService;
+        private readonly IUserService _userService = userService;
         private readonly IBookingService _bookingService = bookingService;
         private readonly IOptions<MongoDBSettings> _mongoSettings = mongoSettings;
         private readonly SignUpValidator _validator = signupValidator;
@@ -32,7 +33,7 @@ namespace LaundryApi.Controllers
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
 
-            var userExists = await _laundryService.FindUserByEmail(newUser.email);
+            var userExists = await _userService.FindUserByEmail(newUser.email);
             if (userExists != null)
             {
                 throw new CustomException("User already exists", "", 403);
@@ -54,7 +55,7 @@ namespace LaundryApi.Controllers
 
             try
             {
-                await _laundryService.CreateUser(_mongoSettings.Value.UsersCollectionName, newUser);
+                await _userService.CreateUser(_mongoSettings.Value.UsersCollectionName, newUser);
             }
             catch (CustomException ex)
             {
@@ -65,7 +66,7 @@ namespace LaundryApi.Controllers
 
         private async Task<User> AddDbNameToUser(User newUser)
         {
-            var existingUserWithSameDb = await _laundryService.FindExistingUserWithDbName(newUser);
+            var existingUserWithSameDb = await _userService.FindExistingUserWithDbName(newUser);
             if (existingUserWithSameDb != null)
             {
                 newUser.dbName = existingUserWithSameDb.dbName;

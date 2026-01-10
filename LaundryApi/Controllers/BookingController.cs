@@ -12,9 +12,10 @@ namespace LaundryBooking.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class BookingController(ILaundryService laundryService, IBookingService bookingService) : ControllerBase
+    public class BookingController(ILaundryService laundryService, IBookingService bookingService, IUserService userService) : ControllerBase
     {
         private readonly ILaundryService _laundryService = laundryService;
+        private readonly IUserService _userService = userService;
         private readonly IBookingService _bookingService = bookingService;
 
 
@@ -24,7 +25,7 @@ namespace LaundryBooking.Controllers
         // add request string for machine _id
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            User? user = await _laundryService.FindUserById(userId!);
+            User? user = await _userService.FindUserById(userId!);
             if (user == null)
             {
                 throw new CustomException("user is not found", null, 404);
@@ -69,7 +70,7 @@ namespace LaundryBooking.Controllers
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            User? user = await _laundryService.FindUserById(userId!);
+            User? user = await _userService.FindUserById(userId!);
             if (user == null)
             {
                 throw new CustomException("user is not found", null, 404);
@@ -164,7 +165,7 @@ namespace LaundryBooking.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            User? user = await _laundryService.FindUserById(userId!);
+            User? user = await _userService.FindUserById(userId!);
             if (user == null)
             {
                 throw new CustomException("user is not found", null, 404);
@@ -233,7 +234,7 @@ namespace LaundryBooking.Controllers
                 throw new CustomException("Check your userId", null, 403);
             }
 
-            User? user = await _laundryService.FindUserById(userId!);
+            User? user = await _userService.FindUserById(userId!);
 
             if (user == null)
             {
@@ -267,7 +268,7 @@ namespace LaundryBooking.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            User? user = await _laundryService.FindUserById(userId!);
+            User? user = await _userService.FindUserById(userId!);
 
             if (user == null)
             {
@@ -295,7 +296,7 @@ namespace LaundryBooking.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            User? user = await _laundryService.FindUserById(userId!);
+            User? user = await _userService.FindUserById(userId!);
             if (user == null)
             {
                 throw new CustomException("user is not found", null, 404);

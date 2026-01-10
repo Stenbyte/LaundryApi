@@ -15,21 +15,21 @@ namespace LaundryApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly JwtService _jwtService;
-        private readonly ILaundryService _layndryService;
+        private readonly IUserService _userService;
         private readonly LoginValidator _loginValidator;
         private readonly LogOutValidator _logOutValidator;
         private readonly IConfiguration _configuration;
         private readonly IMemoryCache _cache;
 
 
-        public AuthController(JwtService jwtService, ILaundryService laundryService, LoginValidator validator, IConfiguration configuration, LogOutValidator logOutValidator, IMemoryCache cache)
+        public AuthController(JwtService jwtService, LoginValidator validator, IConfiguration configuration, LogOutValidator logOutValidator, IMemoryCache cache, IUserService userService)
         {
             _cache = cache;
             _jwtService = jwtService;
-            _layndryService = laundryService;
             _loginValidator = validator;
             _configuration = configuration;
             _logOutValidator = logOutValidator;
+            _userService = userService;
         }
 
         [HttpPost("login")]
@@ -50,7 +50,7 @@ namespace LaundryApi.Controllers
             {
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
-            var user = await _layndryService.FindUserByEmail(request.email);
+            var user = await _userService.FindUserByEmail(request.email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.password, user.password))
                 if (user == null)
                 {
@@ -63,7 +63,7 @@ namespace LaundryApi.Controllers
             user.refreshToken = refreshToken;
             user.refreshTokenExpiry = DateTime.UtcNow
             .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));
-            await _layndryService.UpdateUser(user);
+            await _userService.UpdateUser(user);
 
             new HelperFunctions().ResetFailedAttempts(request.email, _cache);
 
@@ -87,12 +87,12 @@ namespace LaundryApi.Controllers
                 throw new CustomException("Validation", validationResult.Errors, 400);
             }
 
-            var existingUser = await _layndryService.FindUserByEmail(request.email);
+            var existingUser = await _userService.FindUserByEmail(request.email);
             if (existingUser == null) return Unauthorized();
 
             existingUser.refreshToken = null;
 
-            await _layndryService.UpdateUser(existingUser);
+            await _userService.UpdateUser(existingUser);
 
             Response.Cookies.Delete("refresh_token");
 
@@ -113,7 +113,7 @@ namespace LaundryApi.Controllers
         public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            User? user = await _layndryService.FindUserByRefreshToken(request.refreshToken);
+            User? user = await _userService.FindUserByRefreshToken(request.refreshToken);
 
             if (user == null || user.refreshTokenExpiry < DateTime.UtcNow)
             {
@@ -127,7 +127,7 @@ namespace LaundryApi.Controllers
             user.refreshTokenExpiry = DateTime.UtcNow
             .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));
 
-            await _layndryService.UpdateUser(user);
+            await _userService.UpdateUser(user);
 
             Response.Cookies.Append("refresh_token", newRefreshToken, new CookieOptions {
                 HttpOnly = true,
