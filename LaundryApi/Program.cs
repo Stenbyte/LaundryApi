@@ -14,14 +14,17 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Npgsql;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 [assembly: ApiController]
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true)
+    .AddJsonFile($"appsettings{builder.Environment.EnvironmentName}.json", optional: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.Template.json", optional: true)
     .AddEnvironmentVariables();
 
@@ -138,6 +141,8 @@ if (app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
 }
+// ? do i need routing ?
+app.UseRouting();
 app.UseCors("customPolicy");
 app.UseIpRateLimiting();
 app.UseMiddleware<ExceptionHandlingMiddleware>();

@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using LaundryApi.Helpers;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace LaundryApi.Controllers
 {
@@ -71,7 +72,7 @@ namespace LaundryApi.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["AccessTokenExpirationMinutes"]!))
+                Expires = DateTime.UtcNow.AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!))
             });
 
             return Ok(new { token });
@@ -103,17 +104,27 @@ namespace LaundryApi.Controllers
         [Authorize]
         public IActionResult GetUserInfo()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var userId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                  ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                  ?? User.Identity?.Name;
+
+            var email = User.FindFirst(JwtRegisteredClaimNames.Email)?.Value
+                        ?? User.FindFirst(ClaimTypes.Email)?.Value;
+
             var streetName = User.FindFirst("streetName")?.Value;
             return Ok(new { userId, email, streetName });
         }
 
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest request)
+
+        [HttpPost("refreshToken")]
+        public async Task<IActionResult> RefreshToken()
         {
+            if (!Request.Cookies.TryGetValue("refresh_token", out string? refreshToken))
+            {
+                return Unauthorized(new { message = "Refresh token cookie missing" });
+            }
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            User? user = await _userService.FindUserByRefreshToken(request.refreshToken);
+            User? user = await _userService.FindUserByRefreshToken(refreshToken);
 
             if (user == null || user.refreshTokenExpiry < DateTime.UtcNow)
             {
@@ -133,7 +144,7 @@ namespace LaundryApi.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["AccessTokenExpirationMinutes"]!))
+                Expires = DateTime.UtcNow.AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!))
             });
 
             return Ok(new { accessToken = newAccessToken });
