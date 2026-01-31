@@ -1,0 +1,6 @@
+@TenantApi_HostAddress = http://localhost:5063
+
+GET {{TenantApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

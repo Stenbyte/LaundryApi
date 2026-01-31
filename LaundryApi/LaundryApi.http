@@ -1,6 +1,0 @@
-@LaundryApi_HostAddress = http://localhost:5063
-
-GET {{LaundryApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

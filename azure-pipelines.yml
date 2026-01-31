@@ -20,7 +20,7 @@ steps:
       \"commit\": \"$(git rev-parse HEAD)\",
       \"commitDate\": \"$(git log -1 --format=%cI)\",
       \"buildTime\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\"
-    }" > LaundryApi/build-info.json
+    }" > TenantApi/build-info.json
   displayName: 'Generate build-info.json'    
 
 - task: DotNetCoreCLI@2
