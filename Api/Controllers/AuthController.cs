@@ -84,6 +84,7 @@ namespace TenantApi.Auth.Controllers
         [Authorize]
         public async Task<IActionResult> Logout([FromBody] LogOutRequest request)
         {
+            // add here check from claims
             var validationResult = await _logOutValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
@@ -111,6 +112,7 @@ namespace TenantApi.Auth.Controllers
             var email = User.FindFirstValue(JwtRegisteredClaimNames.Email);
 
             var streetName = User.FindFirstValue("street");
+            // here call to db 
             return Ok(new { userId, email, streetName });
         }
 
@@ -125,6 +127,7 @@ namespace TenantApi.Auth.Controllers
             var jwtSettings = _configuration.GetSection("JwtSettings");
             User? user = await _userService.FindUserByRefreshToken(refreshToken);
 
+            // here as well check with claims
             if (user == null || user.refreshTokenExpiry < DateTime.UtcNow)
             {
                 return Unauthorized(new { message = "Invalid or expired refresh token" });

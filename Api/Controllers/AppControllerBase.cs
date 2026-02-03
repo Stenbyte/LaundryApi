@@ -1,15 +1,16 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using TenantApi.Shared.Constansts;
 
 namespace TenantApi.Controllers
 {
     public abstract class AppControllerBase : ControllerBase
     {
-        protected string? UserId => User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        protected string? UserEmail => User.FindFirstValue(JwtRegisteredClaimNames.Email);
-        protected string? UserStreet => User.FindFirstValue("street");
-        protected string? UserRole => User.FindFirstValue("role");
+        protected string? UserId => User.FindFirstValue(TenantClaims.UserId);
+        protected string? UserEmail => User.FindFirstValue(TenantClaims.Email);
+        protected string? UserStreet => User.FindFirstValue(TenantClaims.Street);
+        protected string? UserRole => User.FindFirstValue(TenantClaims.Role);
     }
 
 }

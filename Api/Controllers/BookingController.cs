@@ -8,6 +8,7 @@ using MongoDB.Bson;
 using TenantApi.Validators;
 using TenantApi.Enums;
 using TenantApi.Controllers;
+using TenantApi.Shared.Constansts;
 
 
 namespace TenantApi.Laundry.Controllers
@@ -25,7 +26,7 @@ namespace TenantApi.Laundry.Controllers
         public async Task<List<Booking>> GetAllBookingsByMachineId()
         // add request string for machine _id
         {
-            var userId = User.FindFirstValue("sub");
+            var userId = User.FindFirstValue(TenantClaims.UserId);
             User? user = await _userService.FindUserById(userId!);
             if (user == null)
             {
@@ -69,7 +70,7 @@ namespace TenantApi.Laundry.Controllers
             {
                 throw new CustomException("Cannot create a reservation for a past time", null, 400);
             }
-            var userId = User.FindFirstValue("sub");
+            var userId = User.FindFirstValue(TenantClaims.UserId);
 
             User? user = await _userService.FindUserById(userId!);
             if (user == null)
@@ -164,7 +165,7 @@ namespace TenantApi.Laundry.Controllers
             TimeSlotValidator.IsBookingHoursWithinRange(request.startTime.Value, request.endTime.Value);
 
 
-            var userId = User.FindFirstValue("sub");
+            var userId = User.FindFirstValue(TenantClaims.UserId);
 
             User? user = await _userService.FindUserById(userId!);
             if (user == null)
@@ -228,7 +229,7 @@ namespace TenantApi.Laundry.Controllers
             {
                 return BadRequest("Invalid booking ID");
             }
-            var userId = User.FindFirstValue("sub");
+            var userId = User.FindFirstValue(TenantClaims.UserId);
 
             if (userId == null)
             {
@@ -267,7 +268,7 @@ namespace TenantApi.Laundry.Controllers
         [HttpPost("cancel")]
         public async Task<IActionResult> CancelBookings()
         {
-            var userId = User.FindFirstValue("sub");
+            var userId = User.FindFirstValue(TenantClaims.UserId);
 
             User? user = await _userService.FindUserById(userId!);
 
@@ -295,7 +296,7 @@ namespace TenantApi.Laundry.Controllers
         [HttpGet("getAllMachines")]
         public async Task<List<MachineModel>> GetAllMachinesByBuildingId()
         {
-            var userId = User.FindFirstValue("sub");
+            var userId = User.FindFirstValue(TenantClaims.UserId);
 
             User? user = await _userService.FindUserById(userId!);
             if (user == null)
