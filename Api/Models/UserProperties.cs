@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TenantApi.Models
 {
-    [Table("UserSProperties")]
+    [Table("UserProperties")]
     public class UserProperty
     {
         [Required, ForeignKey(nameof(UserPg))]

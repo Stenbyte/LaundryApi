@@ -60,7 +60,7 @@ namespace TenantApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserProperty",
+                name: "UserProperties",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -68,15 +68,15 @@ namespace TenantApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserProperty", x => new { x.UserId, x.PropertyId });
+                    table.PrimaryKey("PK_UserProperties", x => new { x.UserId, x.PropertyId });
                     table.ForeignKey(
-                        name: "FK_UserProperty_Properties_PropertyId",
+                        name: "FK_UserProperties_Properties_PropertyId",
                         column: x => x.PropertyId,
                         principalTable: "Properties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserProperty_Users_UserId",
+                        name: "FK_UserProperties_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -89,8 +89,8 @@ namespace TenantApi.Migrations
                 column: "BuildingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProperty_PropertyId",
-                table: "UserProperty",
+                name: "IX_UserProperties_PropertyId",
+                table: "UserProperties",
                 column: "PropertyId");
 
             migrationBuilder.CreateIndex(
@@ -104,7 +104,7 @@ namespace TenantApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserProperty");
+                name: "UserProperties");
 
             migrationBuilder.DropTable(
                 name: "Properties");

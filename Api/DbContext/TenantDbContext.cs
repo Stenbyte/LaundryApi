@@ -7,7 +7,7 @@ public class TenantDbContext : DbContext
 
     public DbSet<UserPg> Users { get; set; }
     public DbSet<Property> Properties { get; set; }
-    public DbSet<UserProperty> UsersProperties { get; set; }
+    public DbSet<UserProperty> UserProperties { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

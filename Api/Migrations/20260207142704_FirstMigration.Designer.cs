@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TenantApi.Migrations
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20260207132913_FirstMigration")]
+    [Migration("20260207142704_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -115,7 +115,7 @@ namespace TenantApi.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("UserProperty");
+                    b.ToTable("UserProperties");
                 });
 
             modelBuilder.Entity("TenantApi.Models.Property", b =>
@@ -131,19 +131,19 @@ namespace TenantApi.Migrations
 
             modelBuilder.Entity("TenantApi.Models.UserProperty", b =>
                 {
-                    b.HasOne("TenantApi.Models.Property", "Properties")
-                        .WithMany("UsersProperties")
+                    b.HasOne("TenantApi.Models.Property", "Property")
+                        .WithMany("UserProperties")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TenantApi.Models.UserPg", "User")
-                        .WithMany("UsersProperties")
+                        .WithMany("UserProperties")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Properties");
+                    b.Navigation("Property");
 
                     b.Navigation("User");
                 });
@@ -155,12 +155,12 @@ namespace TenantApi.Migrations
 
             modelBuilder.Entity("TenantApi.Models.Property", b =>
                 {
-                    b.Navigation("UsersProperties");
+                    b.Navigation("UserProperties");
                 });
 
             modelBuilder.Entity("TenantApi.Models.UserPg", b =>
                 {
-                    b.Navigation("UsersProperties");
+                    b.Navigation("UserProperties");
                 });
 #pragma warning restore 612, 618
         }
