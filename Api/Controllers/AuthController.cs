@@ -63,6 +63,7 @@ namespace TenantApi.Auth.Controllers
             var token = _jwtService.GenerateJwtToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
 
+            user.refreshToken = null;
             user.refreshToken = refreshToken;
             user.refreshTokenExpiry = DateTime.UtcNow
             .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));

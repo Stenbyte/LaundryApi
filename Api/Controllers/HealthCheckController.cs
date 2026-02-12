@@ -1,7 +1,7 @@
 using TenantApi.Exceptions;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using TenantApi.Models;
+using System.Text.Json;
 
 namespace TenantApi.Controllers
 {
@@ -29,7 +29,7 @@ namespace TenantApi.Controllers
 
             var json = System.IO.File.ReadAllText(path);
 
-            var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            var data = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 
             return Ok(
                 new IsAliveResponse {

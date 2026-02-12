@@ -15,6 +15,7 @@ using MongoDB.Driver;
 using Npgsql;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
 
 [assembly: ApiController]
 
@@ -59,7 +60,7 @@ builder.Services.AddAuthentication(options => {
     {
         options.RequireHttpsMetadata = false;
     }
-    options.SaveToken = true;
+
     options.MapInboundClaims = false;
     options.TokenValidationParameters = new TokenValidationParameters {
         ValidateIssuer = true,
@@ -69,9 +70,46 @@ builder.Services.AddAuthentication(options => {
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(secretKey),
-        ClockSkew = TimeSpan.Zero,
+        ClockSkew = TimeSpan.FromSeconds(30),
         NameClaimType = "sub",
         RoleClaimType = "role"
+    };
+
+    options.Events = new JwtBearerEvents {
+        OnAuthenticationFailed = async ctx => {
+            ctx.Response.StatusCode = 401;
+            ctx.Response.ContentType = "application/json";
+
+
+            string message = "Validation failed";
+            if (ctx.Response.GetType() == typeof(SecurityTokenExpiredException))
+            {
+                message = "Token expired";
+            }
+
+            var result = JsonSerializer.Serialize(new {
+                error = message,
+                detail = ctx.Exception.Message
+            });
+            await ctx.Response.WriteAsync(result);
+        },
+        OnChallenge = async ctx => {
+            ctx.HandleResponse();
+
+            if (!ctx.Response.HasStarted)
+            {
+                ctx.Response.StatusCode = 401;
+                ctx.Response.ContentType = "application/json";
+
+                var result = JsonSerializer.Serialize(new {
+                    error = "Not Authorized",
+                    detail = "You must provide token"
+                }
+                );
+                await ctx.Response.WriteAsync(result);
+            }
+
+        }
     };
 });
 
@@ -105,7 +143,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddSingleton<JwtService>();
+builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters().AddValidatorsFromAssemblyContaining<SignUpValidator>();
@@ -144,14 +182,16 @@ try
 }
 catch (Exception ex)
 {
-    throw new Exception($"------------🍎🍎🍎 Test Connection failed: ${ex}------------");
+    Console.Error.WriteLine("------------🍎🍎🍎 Startup connection test failed ------------");
+    Console.Error.WriteLine(ex);
+    throw;
 }
 
 if (app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
 }
-// ? do i need routing ?
+
 app.UseRouting();
 app.UseCors("customPolicy");
 app.UseIpRateLimiting();

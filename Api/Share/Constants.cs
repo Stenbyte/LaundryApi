@@ -6,6 +6,7 @@ namespace TenantApi.Shared.Constansts
     {
         public const string UserId = JwtRegisteredClaimNames.Sub;
         public const string Email = JwtRegisteredClaimNames.Email;
+        public const string Jti = JwtRegisteredClaimNames.Jti;
         public const string Street = "street";
         public const string Role = "role";
         public const string TenantId = "tid";

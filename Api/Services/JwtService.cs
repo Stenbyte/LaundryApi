@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using TenantApi.Shared.Constansts;
 
 namespace TenantApi.Services
 {
@@ -22,11 +23,11 @@ namespace TenantApi.Services
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
 
             var claims = new List<Claim> {
-            new Claim(JwtRegisteredClaimNames.Sub, user._id!.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim("role" , "User"),
-            new Claim("street", user.adress.streetName)
+            new Claim(TenantClaims.UserId, user._id!.ToString()),
+            new Claim(TenantClaims.Email, user.email),
+            new Claim(TenantClaims.Jti, Guid.NewGuid().ToString()),
+            new Claim(TenantClaims.Role , "User"),
+            new Claim(TenantClaims.Street, user.adress.streetName)
         };
 
             var key = new SymmetricSecurityKey(secretKey);
