@@ -16,6 +16,7 @@ using Npgsql;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 [assembly: ApiController]
 
@@ -87,7 +88,7 @@ builder.Services.AddAuthentication(options => {
                 message = "Token expired";
             }
 
-            var result = JsonSerializer.Serialize(new {
+            string result = JsonSerializer.Serialize(new {
                 error = message,
                 detail = ctx.Exception.Message
             });
@@ -101,7 +102,7 @@ builder.Services.AddAuthentication(options => {
                 ctx.Response.StatusCode = 401;
                 ctx.Response.ContentType = "application/json";
 
-                var result = JsonSerializer.Serialize(new {
+                string result = JsonSerializer.Serialize(new {
                     error = "Not Authorized",
                     detail = "You must provide token"
                 }
@@ -145,7 +146,14 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<JwtService>();
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers()
+.AddJsonOptions(options => {
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters().AddValidatorsFromAssemblyContaining<SignUpValidator>();
 
 builder.Services.AddMemoryCache();

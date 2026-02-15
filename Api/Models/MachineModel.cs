@@ -1,7 +1,6 @@
 using TenantApi.Enums;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Text.Json.Serialization;
 
 namespace TenantApi.Models
 {
@@ -11,10 +10,8 @@ namespace TenantApi.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? _id { get; set; }
 
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public MachineStatus status { get; set; }
 
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public MachineName name { get; set; }
 
         [BsonRepresentation(BsonType.ObjectId)]
