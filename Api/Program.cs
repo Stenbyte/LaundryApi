@@ -30,11 +30,11 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.Template.json", optional: true)
     .AddEnvironmentVariables();
 
-var allowedOrigins = builder.Configuration.GetValue<string>("AllowedOrigins");
+string allowedOrigins = builder.Configuration.GetValue<string>("AllowedOrigins")!;
 
 builder.Services.AddCors(options => {
     options.AddPolicy(name: "customPolicy", policy => {
-        policy.WithOrigins(allowedOrigins!)
+        policy.WithOrigins(allowedOrigins.Split(','))
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -44,7 +44,7 @@ builder.Services.AddCors(options => {
 
 
 
-
+// create separate class for JWT on startup.
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
 
