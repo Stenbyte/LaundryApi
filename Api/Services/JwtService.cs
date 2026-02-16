@@ -22,16 +22,18 @@ namespace TenantApi.Services
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
 
+            var now = DateTime.UtcNow;
+
             var claims = new List<Claim> {
             new Claim(TenantClaims.UserId, user._id!.ToString()),
             new Claim(TenantClaims.Email, user.email),
             new Claim(TenantClaims.Jti, Guid.NewGuid().ToString()),
             new Claim(TenantClaims.Role , "User"),
-            new Claim(TenantClaims.Street, user.adress.streetName)
+
+            new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
         };
 
             var key = new SymmetricSecurityKey(secretKey);
-            // check later HmacSha256 just for broader knowledge and as well RS256
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["AccessTokenExpirationMinutes"]));
 
@@ -40,6 +42,7 @@ namespace TenantApi.Services
                 audience: jwtSettings["Audience"],
                 claims: claims,
                 expires: expires,
+                notBefore: now,
                 signingCredentials: creds
             );
 
