@@ -78,7 +78,7 @@ namespace TenantApi.Auth.Controllers
             Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!)),
                 Path = "/api/auth"
             });
@@ -102,7 +102,7 @@ namespace TenantApi.Auth.Controllers
             var cookieOptions = new CookieOptions {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,
                 Path = "/api/auth"
             };
             Response.Cookies.Delete("refresh_token", cookieOptions);
@@ -151,7 +151,7 @@ namespace TenantApi.Auth.Controllers
             Response.Cookies.Append("refresh_token", newRefreshToken, new CookieOptions {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!)),
                 Path = "/api/auth"
             });
