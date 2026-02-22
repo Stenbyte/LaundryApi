@@ -1,10 +1,6 @@
-
-using TenantApi.Models;
-using MongoDB.Driver;
-
 namespace TenantApi.Repository;
 
-public interface ILaundryRepository
+public interface ITenantRepository
 {
 
     public string TestConnection();

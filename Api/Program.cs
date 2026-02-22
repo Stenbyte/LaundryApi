@@ -138,7 +138,7 @@ builder.Services.AddSingleton(sp => {
     return new MongoClient(settings.ConnectionString);
 });
 builder.Services.AddScoped<ILaundryService, LaundryService>();
-builder.Services.AddScoped<ILaundryRepository, LaundryRepository>();
+builder.Services.AddScoped<ITenantRepository, TenantRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookingService, BookingService>();
@@ -181,11 +181,11 @@ try
 {
     var dataBase = laundryService.TestConnection();
 
-    if (!builder.Environment.IsProduction())
-    {
-        var pgStatus = laundryService.TestPgConnectionWithDbContext();
-        Console.WriteLine($"++++++++++🍏🍏🍏${pgStatus}++++++++++++++");
-    }
+    // if (!builder.Environment.IsProduction())
+    // {
+    //     var pgStatus = laundryService.TestPgConnectionWithDbContext();
+    //     Console.WriteLine($"++++++++++🍏🍏🍏${pgStatus}++++++++++++++");
+    // }
     Console.WriteLine($"++++++++++🍏🍏🍏 Test Connection to MongoDB: ${dataBase}++++++++++++++");
 }
 catch (Exception ex)

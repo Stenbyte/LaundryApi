@@ -7,23 +7,23 @@ using MongoDB.Driver;
 
 namespace TenantApi.Repository;
 
-public class LaundryRepository : ILaundryRepository
+public class TenantRepository : ITenantRepository
 {
     private readonly IMongoDatabase _laundryDb;
 
     private readonly TenantDbContext _dbContext;
 
-    // public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings)
-    // {
-    //     _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
-    //     _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
-    // }
-    public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, TenantDbContext dBContext)
+    public TenantRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings)
     {
         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
-
-        _dbContext = dBContext;
+        // _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
     }
+    //     public TenantRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, TenantDbContext dBContext)
+    //     {
+    //         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
+    // 
+    //         _dbContext = dBContext;
+    //     }
 
     public string TestConnection()
     {

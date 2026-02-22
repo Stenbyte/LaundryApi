@@ -6,9 +6,9 @@ namespace TenantApi.Services
 {
     public class LaundryService : ILaundryService
     {
-        private readonly ILaundryRepository _repository;
+        private readonly ITenantRepository _repository;
 
-        public LaundryService(ILaundryRepository repository)
+        public LaundryService(ITenantRepository repository)
         {
             _repository = repository;
         }
