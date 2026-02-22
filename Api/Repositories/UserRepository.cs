@@ -19,7 +19,8 @@ public class UserRepository : IUserRepository
     //     _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
     //     _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
     // }
-    public UserRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, TenantDbContext dBContext)
+    // public UserRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, TenantDbContext dBContext)
+    public UserRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings)
     {
         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
         _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
