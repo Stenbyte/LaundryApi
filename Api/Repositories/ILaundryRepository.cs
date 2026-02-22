@@ -4,6 +4,6 @@ public interface ITenantRepository
 {
 
     public string TestConnection();
-    public string TestPgConnectionWithDbContext();
+    // public string TestPgConnectionWithDbContext();
 
 }

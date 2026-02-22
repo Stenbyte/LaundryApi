@@ -12,7 +12,7 @@ public class UserRepository : IUserRepository
     private readonly IMongoDatabase _laundryDb;
     private readonly IMongoCollection<User> _userCollection;
 
-    private readonly TenantDbContext _dbContext;
+    // private readonly TenantDbContext _dbContext;
 
     // public LaundryRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings)
     // {
@@ -24,9 +24,9 @@ public class UserRepository : IUserRepository
         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
         _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
 
-        _dbContext = dBContext;
+        // _dbContext = dBContext;
     }
-    
+
 
     public async Task CreateUser(User user)
     {

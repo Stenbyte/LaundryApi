@@ -25,16 +25,16 @@ namespace TenantApi.Services
             }
         }
 
-        public string TestPgConnectionWithDbContext()
-        {
-            try
-            {
-                return _repository.TestPgConnectionWithDbContext();
-            }
-            catch (CustomException ex)
-            {
-                throw new CustomException("DataBase connection failed", ex, 500);
-            }
-        }
+        // public string TestPgConnectionWithDbContext()
+        // {
+        //     try
+        //     {
+        //         return _repository.TestPgConnectionWithDbContext();
+        //     }
+        //     catch (CustomException ex)
+        //     {
+        //         throw new CustomException("DataBase connection failed", ex, 500);
+        //     }
+        // }
     }
 }

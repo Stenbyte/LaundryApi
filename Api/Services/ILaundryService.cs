@@ -5,5 +5,5 @@ public interface ILaundryService
 {
     string TestConnection();
 
-    string TestPgConnectionWithDbContext();
+    // string TestPgConnectionWithDbContext();
 }
