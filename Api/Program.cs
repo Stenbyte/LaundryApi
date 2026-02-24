@@ -137,7 +137,7 @@ builder.Services.AddSingleton(sp => {
     var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
     return new MongoClient(settings.ConnectionString);
 });
-builder.Services.AddScoped<ILaundryService, LaundryService>();
+builder.Services.AddScoped<ITenantService, TenantService>();
 builder.Services.AddScoped<ITenantRepository, TenantRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -176,16 +176,16 @@ var app = builder.Build();
 
 
 var scope = app.Services.CreateScope();
-var laundryService = scope.ServiceProvider.GetRequiredService<ILaundryService>();
+var tenantService = scope.ServiceProvider.GetRequiredService<ITenantService>();
 try
 {
-    var dataBase = laundryService.TestConnection();
+    var dataBase = tenantService.TestConnection();
 
-    // if (!builder.Environment.IsProduction())
-    // {
-    //     var pgStatus = laundryService.TestPgConnectionWithDbContext();
-    //     Console.WriteLine($"++++++++++🍏🍏🍏${pgStatus}++++++++++++++");
-    // }
+    if (!builder.Environment.IsProduction())
+    {
+        var pgStatus = tenantService.TestPgConnectionWithDbContext();
+        Console.WriteLine($"++++++++++🍏🍏🍏${pgStatus}++++++++++++++");
+    }
     Console.WriteLine($"++++++++++🍏🍏🍏 Test Connection to MongoDB: ${dataBase}++++++++++++++");
 }
 catch (Exception ex)

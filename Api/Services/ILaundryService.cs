@@ -1,9 +1,9 @@
 
 namespace TenantApi.Services;
 
-public interface ILaundryService 
+public interface ITenantService
 {
     string TestConnection();
 
-    // string TestPgConnectionWithDbContext();
+    string TestPgConnectionWithDbContext();
 }
