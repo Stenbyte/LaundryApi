@@ -20,48 +20,38 @@ namespace TenantApi.SignUp.Controllers
         private readonly SignUpValidator _validator = signupValidator;
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(User newUser)
+        public async Task<IActionResult> CreateUser(CreateUserRequest request)
         {
-            if (string.IsNullOrEmpty(newUser._id))
-            {
-                newUser._id = ObjectId.GenerateNewId().ToString();
-            }
-            var validationResult = await _validator.ValidateAsync(newUser);
+            //             var validationResult = await _validator.ValidateAsync(newUser);
+            // 
+            //             if (!validationResult.IsValid)
+            //             {
+            //                 throw new CustomException("Validation", validationResult.Errors, 400);
+            //             }
 
-            if (!validationResult.IsValid)
-            {
-                throw new CustomException("Validation", validationResult.Errors, 400);
-            }
-
-            var userExists = await _userService.FindUserByEmail(newUser.email);
+            var userExists = await _userService.FindUserByEmail(request.Email);
             if (userExists != null)
             {
                 throw new CustomException("User already exists", "", 403);
             }
 
-            await AddDbNameToUser(newUser);
-            MachineModel newMachine = new MachineModel() {
-                status = MachineStatus.available,
-                name = MachineName.washing,
-                buildingId = newUser.adress._id!,
-                _id = ObjectId.GenerateNewId().ToString()
-            };
-            await _bookingService.CreateMachine(newUser.dbName, newMachine);
-            // enable it only when admin panel will be ready or com up with better idea
-            var hashPassword = BCrypt.Net.BCrypt.HashPassword(newUser.password);
-            newUser.password = hashPassword;
+            var hashPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            request.Password = hashPassword;
 
-            // add here adding machine collection for same db
+            UserPg user = new UserPg {
+                FirstName = request.FirstName,
+                LastName = request.LastName
+            }
 
             try
             {
-                await _userService.CreateUser(_mongoSettings.Value.UsersCollectionName, newUser);
+                await _userService.Create(newUser);
             }
             catch (CustomException ex)
             {
                 throw new CustomException("Unable to create new user", ex, 400);
             }
-            return CreatedAtAction(nameof(CreateUser), new { _id = newUser._id });
+            return CreatedAtAction(nameof(CreateUser), new { _id = newUser.Id });
         }
 
         private async Task<User> AddDbNameToUser(User newUser)

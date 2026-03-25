@@ -28,6 +28,12 @@ public class UserRepository : IUserRepository
         await _userCollection.InsertOneAsync(user);
     }
 
+    public async Task Create(UserPg user)
+    {
+        _dbContext.Users.Add(user);
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task<User?> FindUserById(string userId)
     {
         var existingUser = await _userCollection.Find(user => user._id == userId).FirstOrDefaultAsync();
@@ -50,6 +56,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> FindUserByEmail(string email)
     {
+        var exU = await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
         var existingUser = await _userCollection.Find(user => user.email == email).FirstOrDefaultAsync();
 
         return existingUser;

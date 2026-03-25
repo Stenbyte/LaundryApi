@@ -18,6 +18,11 @@ namespace TenantApi.Services
             await _repository.CreateUser(user);
         }
 
+        public async Task Create(UserPg user)
+        {
+            await _repository.Create(user);
+        }
+
         public async Task<User?> FindUserById(string userId)
         {
             return await _repository.FindUserById(userId);

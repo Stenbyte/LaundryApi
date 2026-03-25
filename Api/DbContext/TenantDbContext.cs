@@ -43,3 +43,47 @@ public class TenantDbContext : DbContext
         // consider bulk config when completely switched to postgresql
     }
 }
+
+
+
+
+
+/// Maybe have it in a future to pass buildingId
+/// public class ApplicationDbContext : DbContext
+// {
+//     private readonly int _currentBuildingId;
+// 
+// // You inject a service that knows who is logged in
+// public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ITenantService tenantService)
+//         : base(options)
+//     {
+//     _currentBuildingId = tenantService.GetBuildingId();
+// }
+// 
+// public DbSet<LaundryBooking> Bookings { get; set; }
+// 
+// protected override void OnModelCreating(ModelBuilder modelBuilder)
+// {
+//     base.OnModelCreating(modelBuilder);
+// 
+//     // Apply a global filter to any entity implementing ITenantEntity
+//     foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+//     {
+//         if (typeof(ITenantEntity).IsAssignableFrom(entityType.ClrType))
+//         {
+//             modelBuilder.Entity(entityType.ClrType)
+//                 .HasQueryFilter(ConvertFilterExpression(entityType.ClrType));
+//         }
+//     }
+// }
+// 
+// // Helper to create the lambda expression: x => x.BuildingId == _currentBuildingId
+// private LambdaExpression ConvertFilterExpression(Type type)
+// {
+//     var parameter = Expression.Parameter(type, "x");
+//     var property = Expression.Property(parameter, nameof(ITenantEntity.BuildingId));
+//     var comparison = Expression.Equal(property, Expression.Constant(_currentBuildingId));
+//     return Expression.Lambda(comparison, parameter);
+// }
+// }
+/// 
