@@ -127,7 +127,7 @@ if (!builder.Environment.IsProduction())
     builder.Services.AddDbContextPool<TenantDbContext>(options => {
         var settings = builder.Configuration.GetSection("Postgres").Get<PostgresSettings>();
 
-        options.UseNpgsql($"Host={settings?.Host};Port={settings?.Port};Database={settings?.DatabaseName};Username={settings?.UserName};Password={settings?.Password}").UseSnakeCaseNamingConvention();
+        options.UseNpgsql($"Host={settings?.Host};Port={settings?.Port};Database={settings?.DatabaseName};Username={settings?.UserName};Password={settings?.Password}");
     });
 }
 
