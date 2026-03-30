@@ -12,9 +12,9 @@ public class CreateUserRequest
     [Required, MaxLength(100)]
     public required string Email { get; set; }
 
-    [Required, MaxLength(16)]
+    [Required, MaxLength(24)]
     public required string Password { get; set; }
 
     public bool? IsAdmin { get; set; }
-    public ICollection<UserProperty> UserProperties { get; set; } = new List<UserProperty>();
+    public ICollection<UserProperty> UserProperty { get; set; } = new List<UserProperty>();
 }
