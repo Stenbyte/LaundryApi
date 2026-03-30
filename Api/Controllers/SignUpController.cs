@@ -22,12 +22,12 @@ namespace TenantApi.SignUp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserRequest request)
         {
-            //             var validationResult = await _validator.ValidateAsync(newUser);
-            // 
-            //             if (!validationResult.IsValid)
-            //             {
-            //                 throw new CustomException("Validation", validationResult.Errors, 400);
-            //             }
+            var validationResult = await _validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                throw new CustomException("Validation", validationResult.Errors, 400);
+            }
 
             var userExists = await _userService.FindUserByEmail(request.Email);
             if (userExists != null)
@@ -39,35 +39,23 @@ namespace TenantApi.SignUp.Controllers
             request.Password = hashPassword;
 
             UserPg user = new UserPg {
+                Id = new Guid(),
                 FirstName = request.FirstName,
-                LastName = request.LastName
-            }
+                LastName = request.LastName,
+                Email = request.Email,
+                Password = request.Password,
+                UserProperty = new List<UserProperty>()
+            };
 
             try
             {
-                await _userService.Create(newUser);
+                await _userService.Create(user);
             }
             catch (CustomException ex)
             {
                 throw new CustomException("Unable to create new user", ex, 400);
             }
-            return CreatedAtAction(nameof(CreateUser), new { _id = newUser.Id });
-        }
-
-        private async Task<User> AddDbNameToUser(User newUser)
-        {
-            var existingUserWithSameDb = await _userService.FindExistingUserWithDbName(newUser);
-            if (existingUserWithSameDb != null)
-            {
-                newUser.dbName = existingUserWithSameDb.dbName;
-                newUser.adress._id = existingUserWithSameDb.adress._id;
-            }
-            else
-            {
-                newUser.dbName = $"Laundry_{newUser.adress.streetName}";
-                newUser.adress._id = ObjectId.GenerateNewId().ToString();
-            }
-            return newUser;
+            return CreatedAtAction(nameof(CreateUser), new { _id = user.Id });
         }
     }
 }

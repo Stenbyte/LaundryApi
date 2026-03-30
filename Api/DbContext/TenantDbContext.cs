@@ -7,6 +7,7 @@ public class TenantDbContext : DbContext
 
     public DbSet<UserPg> Users { get; set; }
     public DbSet<Property> Properties { get; set; }
+    public DbSet<Building> Buildings { get; set; }
     public DbSet<UserProperty> UserProperties { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,12 +20,13 @@ public class TenantDbContext : DbContext
              .OnDelete(DeleteBehavior.Cascade);
         });
 
+
         modelBuilder.Entity<UserProperty>(e => {
             e.HasKey(up => new { up.UserId, up.PropertyId });
 
-            e.HasOne(up => up.User).WithMany(u => u.UserProperties).HasForeignKey(up => up.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(up => up.User).WithMany(u => u.UserProperty).HasForeignKey(up => up.UserId).OnDelete(DeleteBehavior.Cascade);
 
-            e.HasOne(up => up.Property).WithMany(p => p.UserProperties).HasForeignKey(up => up.PropertyId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(up => up.Property).WithMany(p => p.UserProperty).HasForeignKey(up => up.PropertyId).OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<UserPg>(e => {
