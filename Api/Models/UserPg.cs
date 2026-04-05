@@ -1,14 +1,14 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace TenantApi.Models
 {
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("users")]
     public class UserPg
     {
-        [Required, Key]
+        [Key]
         [Column("id")]
-        public required Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required, MaxLength(100)]
         [Column("first_name")]
@@ -29,7 +29,7 @@ namespace TenantApi.Models
         [Column("is_admin")]
         public bool? IsAdmin { get; set; }
 
-        public ICollection<UserProperty> UserProperty { get; set; } = new List<UserProperty>();
+        public ICollection<UserProperty> UserProperties { get; set; } = new List<UserProperty>();
 
     }
 }

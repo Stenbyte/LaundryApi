@@ -11,15 +11,12 @@ namespace TenantApi.Models
         public required Guid UserId { get; set; }
 
         [Required]
-        [Column("user")]
         public required UserPg User { get; set; }
 
         [Required, ForeignKey(nameof(Property))]
         [Column("property_id")]
         public required Guid PropertyId { get; set; }
 
-        [Required]
-        [Column("property")]
         public required Property Property { get; set; }
     }
 }

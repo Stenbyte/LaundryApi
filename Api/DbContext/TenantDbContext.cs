@@ -24,7 +24,7 @@ public class TenantDbContext : DbContext
         modelBuilder.Entity<UserProperty>(e => {
             e.HasKey(up => new { up.UserId, up.PropertyId });
 
-            e.HasOne(up => up.User).WithMany(u => u.UserProperty).HasForeignKey(up => up.UserId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(up => up.User).WithMany(u => u.UserProperties).HasForeignKey(up => up.UserId).OnDelete(DeleteBehavior.Cascade);
 
             e.HasOne(up => up.Property).WithMany(p => p.UserProperty).HasForeignKey(up => up.PropertyId).OnDelete(DeleteBehavior.Cascade);
         });

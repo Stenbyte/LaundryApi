@@ -44,7 +44,7 @@ namespace TenantApi.SignUp.Controllers
                 LastName = request.LastName,
                 Email = request.Email,
                 Password = request.Password,
-                UserProperty = new List<UserProperty>()
+                UserProperties = new List<UserProperty>()
             };
 
             try

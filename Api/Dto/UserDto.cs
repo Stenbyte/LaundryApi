@@ -16,5 +16,5 @@ public class CreateUserRequest
     public required string Password { get; set; }
 
     public bool? IsAdmin { get; set; }
-    public ICollection<UserProperty> UserProperty { get; set; } = new List<UserProperty>();
+    public ICollection<UserProperty> UserProperties { get; set; } = new List<UserProperty>();
 }
