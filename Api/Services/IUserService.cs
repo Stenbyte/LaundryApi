@@ -8,7 +8,7 @@ public interface IUserService
 
     Task Create(UserPg user);
     Task<User?> FindUserById(string userId);
-    Task<User?> FindUserByEmail(string email);
+    Task<UserPg> FindUserByEmail(string email);
     Task<User?> FindExistingUserWithDbName(User newUser);
     Task<User?> FindUserByRefreshToken(string refreshToken);
     Task UpdateUser(User userToUpdate);

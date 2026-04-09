@@ -27,7 +27,7 @@ namespace TenantApi.Services
         {
             return await _repository.FindUserById(userId);
         }
-        public async Task<User?> FindUserByEmail(string email)
+        public async Task<UserPg> FindUserByEmail(string email)
         {
             return await _repository.FindUserByEmail(email);
         }

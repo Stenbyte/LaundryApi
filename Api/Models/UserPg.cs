@@ -10,19 +10,19 @@ namespace TenantApi.Models
         [Column("id")]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        [Required, MaxLength(100)]
+        [Required, MaxLength(200)]
         [Column("first_name")]
         public required string FirstName { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required, MaxLength(200)]
         [Column("last_name")]
         public required string LastName { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required, MaxLength(200)]
         [Column("email")]
         public required string Email { get; set; }
 
-        [Required, MaxLength(24)]
+        [Required, MaxLength(100)]
         [Column("password")]
         public required string Password { get; set; }
 
