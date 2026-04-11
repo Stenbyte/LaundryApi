@@ -1,4 +1,5 @@
 using FluentValidation;
+using TenantApi.Dto;
 using TenantApi.Exceptions;
 using TenantApi.Models;
 
@@ -71,16 +72,16 @@ namespace TenantApi.Validators
         }
     }
 
-    public class AdressValidator : AbstractValidator<Adress>
+    public class AdressValidator : AbstractValidator<AdressDto>
     {
         public AdressValidator()
         {
-            RuleFor(x => x.streetName).NotEmpty()
+            RuleFor(x => x.StreetName).NotEmpty()
             .WithMessage("Street name is required")
             .MaximumLength(100)
             .WithMessage("Max street name is 100 characters");
 
-            RuleFor(x => x.buildingNumber).NotEmpty().Matches(@"^[1-9]\d*$")
+            RuleFor(x => x.BuildingNumber).NotEmpty().Matches(@"^[1-9]\d*$")
             .WithMessage("House Number is required");
         }
     }

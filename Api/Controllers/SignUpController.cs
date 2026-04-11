@@ -3,9 +3,8 @@ using TenantApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TenantApi.Exceptions;
-using MongoDB.Bson;
 using TenantApi.Validators;
-using TenantApi.Enums;
+using TenantApi.Dto;
 
 
 namespace TenantApi.SignUp.Controllers
@@ -38,14 +37,34 @@ namespace TenantApi.SignUp.Controllers
             var hashPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
             request.Password = hashPassword;
 
+
+
+            Building building = new Building {
+                StreetName = request.adress.StreetName,
+                BuildingNumber = request.adress.BuildingNumber
+            };
+
+            Property property = new Property {
+                UnitName = "ST.TH",
+                Building = building,
+                BuildingId = building.Id
+            };
+
             UserPg user = new UserPg {
-                Id = new Guid(),
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Email = request.Email,
-                Password = request.Password,
-                UserProperties = new List<UserProperty>()
+                Password = request.Password
             };
+
+            UserProperty userProperties = new UserProperty {
+                User = user,
+                UserId = user.Id,
+                Property = property,
+                PropertyId = property.Id
+            };
+
+            user.UserProperties.Add(userProperties);
 
             try
             {
@@ -53,6 +72,7 @@ namespace TenantApi.SignUp.Controllers
             }
             catch (CustomException ex)
             {
+                // Revisit, db throw another exception which is caught in global
                 throw new CustomException("Unable to create new user", ex, 400);
             }
             return CreatedAtAction(nameof(CreateUser), new { _id = user.Id });
