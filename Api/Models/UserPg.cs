@@ -28,7 +28,7 @@ namespace TenantApi.Models
 
         public string? refreshToken { get; set; }
 
-        public DateTime refreshTokenExpiry { get; set; }
+        public DateTime? refreshTokenExpiry { get; set; }
 
         [Column("is_admin")]
         public bool? IsAdmin { get; set; }
