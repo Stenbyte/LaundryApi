@@ -42,7 +42,7 @@ namespace TenantApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("buildings");
+                    b.ToTable("buildings", (string)null);
                 });
 
             modelBuilder.Entity("TenantApi.Models.Property", b =>
@@ -66,7 +66,7 @@ namespace TenantApi.Migrations
 
                     b.HasIndex("BuildingId");
 
-                    b.ToTable("properties");
+                    b.ToTable("properties", (string)null);
                 });
 
             modelBuilder.Entity("TenantApi.Models.UserPg", b =>
@@ -104,18 +104,12 @@ namespace TenantApi.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("password");
 
-                    b.Property<string>("refreshToken")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("refreshTokenExpiry")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("TenantApi.Models.UserProperty", b =>
@@ -132,7 +126,7 @@ namespace TenantApi.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.ToTable("user_properties");
+                    b.ToTable("user_properties", (string)null);
                 });
 
             modelBuilder.Entity("TenantApi.Models.Property", b =>
