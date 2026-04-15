@@ -14,12 +14,12 @@ public class UserRepository : IUserRepository
 
     private readonly TenantDbContext _dbContext;
 
-    public UserRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, TenantDbContext dBContext)
+    public UserRepository(MongoClient _client, IOptions<MongoDBSettings> mongoSettings, TenantDbContext dbContext)
     {
         _laundryDb = _client.GetDatabase(mongoSettings.Value.DatabaseName);
         _userCollection = _laundryDb.GetCollection<User>(mongoSettings.Value.UsersCollectionName);
 
-        _dbContext = dBContext;
+        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
 
@@ -54,29 +54,35 @@ public class UserRepository : IUserRepository
         return existingUser;
     }
 
-    public async Task<UserPg> FindUserByEmail(string email)
+    public async Task<UserPg> FindUserByEmail(string? email)
     {
-        var existingUser = await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
-        // var existingUser = await _userCollection.Find(user => user.email == email).FirstOrDefaultAsync();
 
-        return existingUser;
+        if (email == null || email.Length == 0)
+        {
+            throw new CustomException("Email is required", null, 400);
+        }
+
+        UserPg? existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u!.Email! == email);
+
+        if (existingUser is null)
+        {
+            throw new CustomException("User not found", null, 404);
+        }
+        return existingUser!;
     }
 
-    public async Task UpdateUser(User userToUpdate)
+    public async Task UpdateUser(UserPg userToUpdate)
     {
-        // revisit if i need return a result ?
-        var filter = Builders<User>.Filter.Eq(user => user._id, userToUpdate._id);
-        var update = Builders<User>.Update
-            .Set(u => u.refreshToken, userToUpdate.refreshToken)
-            .Set(u => u.refreshTokenExpiry, userToUpdate.refreshTokenExpiry);
+        UserPg? user = await _dbContext.Users.FirstOrDefaultAsync(user => user.Id == userToUpdate.Id);
 
-        var updateResult = await _userCollection.UpdateOneAsync(filter, update);
-
-        if (updateResult.ModifiedCount == 0)
+        if (user == null)
         {
-            throw new CustomException("User not found or no changes made", null, 400);
+            throw new CustomException("User not found", null, 400);
         }
-        // return updateResult;
 
+        user.refreshToken = userToUpdate.refreshToken;
+        user.refreshTokenExpiry = userToUpdate.refreshTokenExpiry;
+
+        await _dbContext.SaveChangesAsync();
     }
 }

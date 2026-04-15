@@ -17,7 +17,7 @@ namespace TenantApi.Services
             _configuration = configuration;
         }
 
-        public string GenerateJwtToken(User user)
+        public string GenerateJwtToken(UserPg user)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
@@ -25,8 +25,8 @@ namespace TenantApi.Services
             var now = DateTime.UtcNow;
 
             var claims = new List<Claim> {
-            new Claim(TenantClaims.UserId, user._id!.ToString()),
-            new Claim(TenantClaims.Email, user.email),
+            new Claim(TenantClaims.UserId, user.Id!.ToString()),
+            new Claim(TenantClaims.Email, user.Email),
             new Claim(TenantClaims.Jti, Guid.NewGuid().ToString()),
             new Claim(TenantClaims.Role , "User"),
 

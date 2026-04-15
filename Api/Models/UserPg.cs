@@ -26,6 +26,10 @@ namespace TenantApi.Models
         [Column("password")]
         public required string Password { get; set; }
 
+        public string? refreshToken { get; set; }
+
+        public DateTime refreshTokenExpiry { get; set; }
+
         [Column("is_admin")]
         public bool? IsAdmin { get; set; }
 

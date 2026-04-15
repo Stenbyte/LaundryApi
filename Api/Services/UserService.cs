@@ -27,7 +27,7 @@ namespace TenantApi.Services
         {
             return await _repository.FindUserById(userId);
         }
-        public async Task<UserPg> FindUserByEmail(string email)
+        public async Task<UserPg?> FindUserByEmail(string email)
         {
             return await _repository.FindUserByEmail(email);
         }
@@ -36,12 +36,13 @@ namespace TenantApi.Services
             return await _repository.FindExistingUserWithDbName(newUser);
         }
 
-        public async Task<User?> FindUserByRefreshToken(string refreshToken)
+        public async Task<UserPg?> FindUserByRefreshToken(string refreshToken)
         {
-            return await _repository.FindUserByRefreshToken(refreshToken);
+            // return await _repository.FindUserByRefreshToken(refreshToken);
+            return null;
         }
 
-        public async Task UpdateUser(User userToUpdate)
+        public async Task UpdateUser(UserPg userToUpdate)
         {
             await _repository.UpdateUser(userToUpdate);
         }

@@ -13,6 +13,6 @@ public interface IUserRepository
     Task<UserPg> FindUserByEmail(string email);
     Task<User> FindExistingUserWithDbName(User newUser);
     Task<User> FindUserByRefreshToken(string refreshToken);
-    Task UpdateUser(User userToUpdate);
+    Task UpdateUser(UserPg userToUpdate);
 
 }

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 using TenantApi.Helpers;
 using TenantApi.Controllers;
 using TenantApi.Shared.Constansts;
+using TenantApi.Dto;
 
 
 namespace TenantApi.Auth.Controllers
@@ -39,74 +40,73 @@ namespace TenantApi.Auth.Controllers
         public async Task<IActionResult> Login([FromBody] CustomLoginRequest request)
         {
 
-            //             var validationResult = await _loginValidator.ValidateAsync(request);
-            //             if (!validationResult.IsValid)
-            //             {
-            //                 throw new CustomException("Validation", validationResult.Errors, 400);
-            //             }
-            // 
-            //             string cachKey = $"lockout_{request.email}";
-            // 
-            //             if (_cache.TryGetValue(cachKey, out DateTime lockOutTime))
-            //             {
-            //                 if (lockOutTime > DateTime.UtcNow)
-            //                 {
-            //                     throw new CustomException("Email is locked for 10 min", null, 403);
-            //                 }
-            //             }
-            // 
-            //             var user = await _userService.FindUserByEmail(request.email);
-            //             if (user == null || !BCrypt.Net.BCrypt.Verify(request.password, user.password))
-            //             {
-            //                 new HelperFunctions().TrackFailedAttempt(request.email, _cache);
-            //                 return Unauthorized(new { message = "Invalid credentials" });
-            //             }
-            //             var token = _jwtService.GenerateJwtToken(user);
-            //             var refreshToken = _jwtService.GenerateRefreshToken();
-            // 
-            //             var jwtSettings = _configuration.GetSection("JwtSettings");
-            // 
-            //             user.refreshToken = null;
-            //             user.refreshToken = refreshToken;
-            //             user.refreshTokenExpiry = DateTime.UtcNow
-            //             .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));
-            // 
-            //             await _userService.UpdateUser(user);
-            // 
-            //             new HelperFunctions().ResetFailedAttempts(request.email, _cache);
-            // 
-            //             Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions {
-            //                 HttpOnly = true,
-            //                 Secure = true,
-            //                 SameSite = SameSiteMode.None,
-            //                 Expires = DateTime.UtcNow.AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!)),
-            //                 Path = "/api/auth"
-            //             });
-            // 
-            //             return Ok(new { token });
-            return null;
+            var validationResult = await _loginValidator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                throw new CustomException("Validation", validationResult.Errors, 400);
+            }
+
+            string cachKey = $"lockout_{request.Email}";
+
+            if (_cache.TryGetValue(cachKey, out DateTime lockOutTime))
+            {
+                if (lockOutTime > DateTime.UtcNow)
+                {
+                    throw new CustomException("Email is locked for 10 min", null, 403);
+                }
+            }
+
+            var user = await _userService.FindUserByEmail(request.Email);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            {
+                new HelperFunctions().TrackFailedAttempt(request.Email, _cache);
+                return Unauthorized(new { message = "Invalid credentials" });
+            }
+            var token = _jwtService.GenerateJwtToken(user);
+            var refreshToken = _jwtService.GenerateRefreshToken();
+
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+
+            user.refreshToken = null;
+            user.refreshToken = refreshToken;
+            user.refreshTokenExpiry = DateTime.UtcNow
+            .AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!));
+
+            await _userService.UpdateUser(user);
+
+            new HelperFunctions().ResetFailedAttempts(request.Email, _cache);
+
+            Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(double.Parse(jwtSettings["RefreshTokenExpirationDays"]!)),
+                Path = "/api/auth"
+            });
+
+            return Ok(new { token });
         }
 
         [HttpPost("logout")]
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            //             string email = User.FindFirstValue(TenantClaims.Email) ?? "";
-            // 
-            //             var existingUser = await _userService.FindUserByEmail(email);
-            //             if (existingUser != null)
-            //             {
-            //                 existingUser.refreshToken = null;
-            //                 await _userService.UpdateUser(existingUser);
-            //             }
-            // 
-            //             var cookieOptions = new CookieOptions {
-            //                 HttpOnly = true,
-            //                 Secure = true,
-            //                 SameSite = SameSiteMode.None,
-            //                 Path = "/api/auth"
-            //             };
-            //             Response.Cookies.Delete("refresh_token", cookieOptions);
+            string email = User.FindFirstValue(TenantClaims.Email) ?? "";
+
+            var existingUser = await _userService.FindUserByEmail(email);
+            if (existingUser != null)
+            {
+                existingUser.refreshToken = null;
+                await _userService.UpdateUser(existingUser);
+            }
+
+            var cookieOptions = new CookieOptions {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/api/auth"
+            };
+            Response.Cookies.Delete("refresh_token", cookieOptions);
 
             return Ok(new { message = "Logged out" });
         }
@@ -133,7 +133,7 @@ namespace TenantApi.Auth.Controllers
                 return Unauthorized(new { message = "Refresh token cookie missing" });
             }
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            User? user = await _userService.FindUserByRefreshToken(refreshToken);
+            UserPg? user = await _userService.FindUserByRefreshToken(refreshToken);
 
             if (user == null || user.refreshTokenExpiry < DateTime.UtcNow.AddSeconds(30))
             {
